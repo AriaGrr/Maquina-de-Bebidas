@@ -10,9 +10,9 @@ LJMP main
 
 org 0030h
 
-;-------------------------------- Subroutines ---------------------------------
+;--------------------------------- Subrotinas ---------------------------------
 
-;------------------------------- Manda Caracter --------------------------------
+;------------------------------ Manda Caracter --------------------------------
 
 sendCharacter :
 SETB P1.3 ; | set RS: Indica que data esta sendo enviada para o modulo.
@@ -103,7 +103,7 @@ CLR P1.2
 CALL delay
 RET
 
-;----------------------------------- Escreve String ------------------------------------
+;-------------------------------- Escreve String ------------------------------------
 
 escreveString:
 MOV R2, #0
@@ -145,7 +145,7 @@ RET
 
 ; | Limpa todo o display e retorna o cursor para primeira posicao
 
-;-------------------------------- Clear Display ---------------------------------
+;------------------------------- Clear Display ---------------------------------
 
 clearDisplay :
 CLR P1.3 ; | clear RS - indicates that instruction is being sent to module
@@ -164,7 +164,7 @@ CLR P1.2 ; | negative edge on E
 CALL delay ; | wait for BF to clear
 RET
 
-;-------------------------------- Retorna Cursor ---------------------------------
+;-------------------------------- Retorna Cursor -------------------------------
 
 ; | Retorna o cursor para primeira posicao sem limpar o display
 
@@ -185,7 +185,7 @@ CLR P1.2 ; | negative edge on E
 CALL delay ; wait for BF to clear
 RET
 
-;----------------------------------- Bebidas ------------------------------------
+;----------------------------------- Bebidas ----------------------------------
 
 COCA:
 DB "Coca Cola - 5.00"
@@ -212,7 +212,7 @@ DJNZ R3, $
 DJNZ R4, $
 RET
 
-;----------------------------------- End of subroutines --------------------------------
+;----------------------------------- End of subroutines -----------------------
 
 ; ---------------------------------- Main -------------------------------------
 
