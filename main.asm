@@ -4,7 +4,7 @@ LJMP main
 org 0030h
 
 sendCharacter :
-SETB P1.3 ; | set RS: Indica que data está sendo enviada para o modulo.
+SETB P1.3 ; set RS - indicates that data is being sent to module
 MOV C, ACC.7 ; |
 MOV P1.7, C ; |
 MOV C, ACC.6 ; |
@@ -25,7 +25,7 @@ MOV C, ACC.0 ; |
 MOV P1.4, C ; | low nibble set
 SETB P1.2 ; |
 CLR P1.2 ; | negative edge on E
-CALL delay ; | Espera o BF dar clear
+CALL delay ; wait for BF to clear
 RET
 
 
@@ -95,14 +95,14 @@ escreveString:
 MOV R2, #0
 rot:
 MOV A, R2
-MOVC A,@A+DPTR ; | Tabela de memoria do programa
-ACALL sendCharacter ; | Manda a data de A para o modulo
+MOVC A,@A+DPTR ;lÃª a tabela da memÃ³ria de programa
+ACALL sendCharacter ; send data in A to LCD module
 INC R2
-JNZ rot ; | if A is 0, then end of data has been reached - jump out of loop
+JNZ rot ; if A is 0, then end of data has been reached - jump out of loop
 RET
 
 posicionaCursor :
-CLR P1.3 ; | clear RS - indicates that instruction is being sent to module
+CLR P1.3 ; clear RS - indicates that instruction is being sent to module
 SETB P1.7 ; |
 MOV C, ACC.6 ; |
 MOV P1.6, C ; |
@@ -128,9 +128,9 @@ CALL delay
 RET
 
 
-;Limpa todo o display e retorna o cursor para primeira posiÃƒÂ§ÃƒÂ£o
+;Limpa todo o display e retorna o cursor para primeira posiÃ§Ã£o
 clearDisplay :
-CLR P1.3 ; | clear RS - indicates that instruction is being sent to module
+CLR P1.3 ; clear RS - indicates that instruction is being sent to module
 CLR P1.7 ; |
 CLR P1.6 ; |
 CLR P1.5 ; |
@@ -143,13 +143,13 @@ CLR P1.5 ; |
 SETB P1.4 ; | low nibble set
 SETB P1.2 ; |
 CLR P1.2 ; | negative edge on E
-CALL delay ; | wait for BF to clear
+CALL delay ; wait for BF to clear
 RET
 
 
-; | Retorna o cursor para primeira posiÃƒÂ§ÃƒÂ£o sem limpar o display
+;Retorna o cursor para primeira posiÃ§Ã£o sem limpar o display
 retornaCursor :
-CLR P1.3 ; | clear RS - indicates that instruction is being sent to module
+CLR P1.3 ; clear RS - indicates that instruction is being sent to module
 CLR P1.7 ; |
 CLR P1.6 ; |
 CLR P1.5 ; |
@@ -166,28 +166,32 @@ CALL delay ; wait for BF to clear
 RET
 
 COCA:
-DB "Coca Cola - 5.00"
-DB 0 ; | Caracter null indica fim da String
+DB "Coca Cola - 3.50"
+DB 0 ;caracter null indica fim da String
 SPRITE:
-DB "Sprite - 4.00"
+DB "Sprite - 3.50"
 DB 0
 MONSTER: 
 DB "Monster - 7.50"
 DB 0
 PEPSI:
 
-DB "Pepsi - 4.50"
+DB "Pepsi - 3.50"
 DB 0
 
 main:
+CLR P2.1
+CLR P2.3
+CLR P2.5
+CLR P2.7
 ACALL lcd_init
 MOV A, #00h
 ACALL posicionaCursor
-MOV DPTR,#COCA ; | DPTR = Inicio da palavra 
+MOV DPTR,#COCA ;DPTR = inÃ­cio da palavra FEI
 ACALL escreveString
 MOV A, #40h
 ACALL posicionaCursor
-MOV DPTR,#PEPSI
+MOV DPTR,#PEPSI ;DPTR = inÃ­cio da palavra Display
 ACALL escreveString
 
 ACALL delay
