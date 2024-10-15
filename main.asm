@@ -176,11 +176,11 @@ main:
 ACALL lcd_init
 MOV A, #00h
 ACALL posicionaCursor
-MOV DPTR,#FEI ;DPTR = início da palavra FEI
+MOV DPTR,#FEI ;DPTR = inicio
 ACALL escreveString
 MOV A, #40h
 ACALL posicionaCursor
-MOV DPTR,#Display ;DPTR = início da palavra Display
+MOV DPTR,#Display ;DPTR = inicio
 ACALL escreveString
 JMP $
 
