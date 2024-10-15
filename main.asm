@@ -1,3 +1,10 @@
+;-------------------------------- Repositorio ---------------------------------
+; | https://github.com/AriaGrr/Maquina-de-Bebidas
+; | Colaboradores: 
+; | Marjorie Luize Martins Costa
+; | Nuno Martins Guilhermino da Silva
+; |
+
 org 0000H
 LJMP main
 
@@ -5,7 +12,8 @@ org 0030h
 
 ;-------------------------------- Subroutines ---------------------------------
 
-;------------------------------------- SendChar -------------------------------------
+;------------------------------- Manda Caracter --------------------------------
+
 sendCharacter :
 SETB P1.3 ; | set RS: Indica que data esta sendo enviada para o modulo.
 MOV C, ACC.7 ; |
@@ -31,6 +39,7 @@ CLR P1.2 ; | negative edge on E
 CALL delay ; | Espera o BF dar clear
 RET
 
+;-------------------------------- Inicia LCD ---------------------------------
 
 lcd_init:
 
@@ -74,8 +83,8 @@ CLR P1.2
 CALL delay
 
 
-;isplay on/o
-;he display
+;Display on/o
+;The display
 CLR P1.7
 CLR P1.6
 CLR P1.5
@@ -94,6 +103,8 @@ CLR P1.2
 CALL delay
 RET
 
+;----------------------------------- Escreve String ------------------------------------
+
 escreveString:
 MOV R2, #0
 rot:
@@ -103,6 +114,8 @@ ACALL sendCharacter ; | Manda a data de A para o modulo
 INC R2
 JNZ rot ; | if A is 0, then end of data has been reached - jump out of loop
 RET
+
+;-------------------------------- Posiciona cursor ---------------------------------
 
 posicionaCursor :
 CLR P1.3 ; | clear RS - indicates that instruction is being sent to module
@@ -130,7 +143,10 @@ CLR P1.2
 CALL delay
 RET
 
-;Limpa todo o display e retorna o cursor para primeira posiÃƒÂ§ÃƒÂ£o
+; | Limpa todo o display e retorna o cursor para primeira posicao
+
+;-------------------------------- Clear Display ---------------------------------
+
 clearDisplay :
 CLR P1.3 ; | clear RS - indicates that instruction is being sent to module
 CLR P1.7 ; |
@@ -148,7 +164,10 @@ CLR P1.2 ; | negative edge on E
 CALL delay ; | wait for BF to clear
 RET
 
-; | Retorna o cursor para primeira posiÃƒÂ§ÃƒÂ£o sem limpar o display
+;-------------------------------- Retorna Cursor ---------------------------------
+
+; | Retorna o cursor para primeira posicao sem limpar o display
+
 retornaCursor :
 CLR P1.3 ; | clear RS - indicates that instruction is being sent to module
 CLR P1.7 ; |
@@ -165,7 +184,9 @@ SETB P1.2 ; |
 CLR P1.2 ; | negative edge on E
 CALL delay ; wait for BF to clear
 RET
-;----------------------------------- Bebidas --------------------------------
+
+;----------------------------------- Bebidas ------------------------------------
+
 COCA:
 DB "Coca Cola - 5.00"
 DB 0 ; | Caracter null indica fim da String
@@ -190,8 +211,11 @@ DJNZ R1, $
 DJNZ R3, $
 DJNZ R4, $
 RET
+
 ;----------------------------------- End of subroutines --------------------------------
+
 ; ---------------------------------- Main -------------------------------------
+
 main:
 ACALL lcd_init
 MOV A, #00h
@@ -219,4 +243,5 @@ MOV DPTR, #MONSTER
 ACALL escreveString
 ACALL clearDisplay 
 JMP main
+
 ; ------------------------------- End of Main ---------------------------------
