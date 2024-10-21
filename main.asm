@@ -220,5 +220,86 @@ MOV R4,	#50
 DJNZ R0, $
 DJNZ R1, $
 DJNZ R3, $
+
+
 DJNZ R4, $
 RET
+
+START:
+; put data in RAM
+	MOV 40H, #'#' 
+	MOV 41H, #'0'
+	MOV 42H, #'*'
+	MOV 43H, #'9'
+	MOV 44H, #'8'
+	MOV 45H, #'7'
+	MOV 46H, #'6'
+	MOV 47H, #'5'
+	MOV 48H, #'4'
+	MOV 49H, #'3'
+	MOV 4AH, #'2'
+	MOV 4BH, #'1'	  
+
+MAIN:
+	ACALL lcd_init
+ROTINA:
+	ACALL leituraTeclado
+	JNB F0, ROTINA   ;if F0 is clear, jump to ROTINA
+	MOV A, #07h
+	ACALL posicionaCursor	
+	MOV A, #40h
+	ADD A, R0
+	MOV R0, A
+	MOV A, @R0        
+	ACALL sendCharacter
+	CLR F0
+	JMP ROTINA
+
+
+
+
+leituraTeclado:
+	MOV R0, #0			; clear R0 - the first key is key0
+
+	; scan row0
+	MOV P0, #0FFh	
+	CLR P0.0			; clear row0
+	CALL colScan		; call column-scan subroutine
+	JB F0, finish		; | if F0 is set, jump to end of program 
+						; | (because the pressed key was found and its number is in  R0)
+	; scan row1
+	SETB P0.0			; set row0
+	CLR P0.1			; clear row1
+	CALL colScan		; call column-scan subroutine
+	JB F0, finish		; | if F0 is set, jump to end of program 
+						; | (because the pressed key was found and its number is in  R0)
+	; scan row2
+	SETB P0.1			; set row1
+	CLR P0.2			; clear row2
+	CALL colScan		; call column-scan subroutine
+	JB F0, finish		; | if F0 is set, jump to end of program 
+						; | (because the pressed key was found and its number is in  R0)
+	; scan row3
+	SETB P0.2			; set row2
+	CLR P0.3			; clear row3
+	CALL colScan		; call column-scan subroutine
+	JB F0, finish		; | if F0 is set, jump to end of program 
+						; | (because the pressed key was found and its number is in  R0)
+finish:
+	RET
+
+; column-scan subroutine
+colScan:
+	JNB P0.4, gotKey	; if col0 is cleared - key found
+	INC R0				; otherwise move to next key
+	JNB P0.5, gotKey	; if col1 is cleared - key found
+	INC R0				; otherwise move to next key
+	JNB P0.6, gotKey	; if col2 is cleared - key found
+	INC R0				; otherwise move to next key
+	RET					; return from subroutine - key not found
+gotKey:
+	SETB F0				; key found - set F0
+	RET					; and return from subroutine
+
+
+
