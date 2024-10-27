@@ -310,12 +310,12 @@ opcoes:
 
     MOV A, #00h
     ACALL posicionaCursor
-    MOV DPTR, #CANCELAR
+    MOV DPTR, #PAGAR
     ACALL delay
     ACALL escreveString
     MOV A, #40h
     ACALL posicionaCursor
-    MOV DPTR, #PAGAR
+    MOV DPTR, #CANCELAR
     ACALL escreveString
     ACALL clearDisplay 
 
