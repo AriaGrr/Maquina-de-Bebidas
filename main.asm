@@ -1,4 +1,4 @@
-;-------------------------------- Repositorio ---------------------------------
+; -------------------------------- Repositorio ---------------------------------
 ; | https://github.com/AriaGrr/Maquina-de-Bebidas
 ; | Colaboradores: 
 ; | Marjorie Luize Martins Costa
@@ -13,14 +13,14 @@
           EN      equ     P1.2    ; | Enable ligado em P1.2
 
 
-;------------------------------ Inicio do programa --------------------------------
+; ------------------------------ Inicio do programa --------------------------------
 
 org 0000H
 LJMP main
 
 org 0030h
 
-;------------------------------ Mapeia Teclado --------------------------------
+; ------------------------------ Mapeia Teclado --------------------------------
 
 ; | MAPEAMENTO DAS TECLAS (salva os valores das teclas na memoria a partir do endereço 40h)
 
@@ -37,7 +37,7 @@ MOV 49H, #'3'
 MOV 4AH, #'2'
 MOV 4BH, #'1'
 
-;------------------------------ Mapeia Valores --------------------------------
+; ------------------------------ Mapeia Valores --------------------------------
 
 ; | Talvez desnecessário, analisar.
 ; | Valor inicial da conta do endereço 30 ao 33
@@ -47,9 +47,9 @@ MOV 4BH, #'1'
  MOV 32H, #0
  MOV 33H, #0
 
-;--------------------------------- Subrotinas ---------------------------------
+; --------------------------------- Subrotinas ---------------------------------
 
-;------------------------------ Manda Caracter --------------------------------
+; ------------------------------ Manda Caracter --------------------------------
 
 sendCharacter :
     SETB RS ; | set RS: Indica que data esta sendo enviada para o modulo.
@@ -76,7 +76,7 @@ sendCharacter :
     CALL delay ; | Espera o BF dar clear
     RET
 
-;-------------------------------- Inicia LCD ---------------------------------
+; -------------------------------- Inicia LCD ---------------------------------
 
 lcd_init:
     CLR RS
@@ -136,7 +136,7 @@ lcd_init:
     CALL delay
     RET
 
-;-------------------------------- Escreve String ------------------------------------
+; -------------------------------- Escreve String ------------------------------------
 
 escreveString:
     MOV R2, #0
@@ -149,7 +149,7 @@ escreveString:
         JNZ rot ; | if A is 0, then end of data has been reached - jump out of loop
         RET
 
-;-------------------------------- Posiciona cursor ---------------------------------
+; -------------------------------- Posiciona cursor ---------------------------------
 
 posicionaCursor :
     CLR RS ; | clear RS - indicates that instruction is being sent to module
@@ -182,7 +182,7 @@ posicionaCursor :
 
 ; | Limpa todo o display e retorna o cursor para primeira posicao
 
-;------------------------------- Clear Display ---------------------------------
+; ------------------------------- Clear Display ---------------------------------
 
 clearDisplay :
     CLR RS ; | clear RS - indicates that instruction is being sent to module
@@ -201,7 +201,7 @@ clearDisplay :
     CALL delay ; | wait for BF to clear
     RET
 
-;-------------------------------- Retorna Cursor -------------------------------
+; -------------------------------- Retorna Cursor -------------------------------
 
 ; | Retorna o cursor para primeira posicao sem limpar o display
 
@@ -222,7 +222,7 @@ retornaCursor :
     CALL delay ; wait for BF to clear
     RET
 
-;----------------------------------- Prints e + ----------------------------------
+; ----------------------------------- Bebidas e + ----------------------------------
 
 CONFERE:
     DB " " ; | O valor (senha) terá quatro digitos, sendo compostos pelo valor da conta em si, e caso o valor da conta não tenha 4 digitos, adicione um 0 ao começo dele.
@@ -235,7 +235,7 @@ COCA:
 PEPSI:
     DB "2- Pepsi   R$ 6 "
     DB 0
-    
+
 SPRITE:
     DB "3- Sprite  R$ 4 "
     DB 0
@@ -260,7 +260,19 @@ PAGAR:
     DB "#-    Pagar    "
     DB 0
 
-; ---------------------------------- Opções ------------------------------------
+TRANSACAO:
+    DB " TRANSACAO "
+    DB 0
+
+APROVADA:
+    DB " APROVADA "
+    DB 0
+
+NEGADA:
+    DB " NEGADA "
+    DB 0
+
+; ---------------------------------- Prints ------------------------------------
 
 opcoes:
     MOV A, #00h
@@ -319,6 +331,33 @@ opcoes:
     ACALL escreveString
     ACALL clearDisplay 
 
+
+passou:
+    MOV A, #00h
+    ACALL posicionaCursor
+    MOV DPTR,#TRANSACAO ; | DPTR = Inicio da palavra 
+    ACALL escreveString
+    MOV A, #40h
+    ACALL posicionaCursor
+    MOV DPTR,#APROVADA
+    ACALL escreveString
+    ACALL delay
+    ACALL clearDisplay
+
+negou:
+    MOV A, #00h
+    ACALL posicionaCursor
+    MOV DPTR,#TRANSACAO ; | DPTR = Inicio da palavra 
+    ACALL escreveString
+    MOV A, #40h
+    ACALL posicionaCursor
+    MOV DPTR,#NEGADA
+    ACALL escreveString
+    ACALL delay
+    ACALL clearDisplay
+
+; | Fazer o display atualizar com valor e o número de produtos do pedido, conforme a pessoa aperta o teclado em sua primeira fase.
+
 ; ---------------------------------- Delay ------------------------------------
 
 delay:
@@ -332,7 +371,7 @@ delay:
     DJNZ R4, $
     RET
 
-;----------------------------------- End of subroutines -----------------------
+; ----------------------------------- End of subroutines -----------------------
 
 ; ---------------------------------- Main -------------------------------------
 
