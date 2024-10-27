@@ -51,6 +51,48 @@ MOV 4BH, #'1'
 
 ; --------------------------------- Subrotinas ---------------------------------
 
+; ------------------------------ Leitura do teclado --------------------------------
+     
+leituraTeclado:
+ 	MOV R0, #0		
+ 	MOV P0, #0FFh	
+ 	CLR P0.0			; | clear row0
+ 	CALL colScan		; | call column-scan subroutine
+	JB F0, finish		; | if F0 is set, jump to end of program 		; | (because the pressed key was found and its number is in  R0)
+      	; | scan row1
+ 	SETB P0.0			; | set row0
+ 	CLR P0.1			; | clear row1
+ 	CALL colScan		; | call column-scan subroutine
+ 	JB F0, finish		; | if F0 is set, jump to end of program 						; | (because the pressed key was found and its number is in  R0)
+      	; | scan row2
+ 	SETB P0.1			; | set row1
+ 	CLR P0.2			; | clear row2
+ 	CALL colScan		; | call column-scan subroutine
+ 	JB F0, finish		; | if F0 is set, jump to end of program 				; | (because the pressed key was found and its number is in  R0)
+      	; | scan row3
+ 	SETB P0.2			; | set row2
+ 	CLR P0.3			; | clear row3
+ 	CALL colScan		; | call column-scan subroutine
+	JB F0, finish		; | if F0 is set, jump to end of program 
+      						; | (because the pressed key was found and its number is in  R0)
+    
+    finish:
+        RET
+        
+    ; | column-scan subroutine
+    colScan:
+        JNB P0.4, gotKey	; | if col0 is cleared - key found
+        INC R0				; | otherwise move to next key
+        JNB P0.5, gotKey	; | if col1 is cleared - key found
+        INC R0				; | otherwise move to next key
+        JNB P0.6, gotKey	; | if col2 is cleared - key found
+        INC R0				; | otherwise move to next key
+        RET					; | return from subroutine - key not found
+    
+    gotKey:
+        SETB F0				; | key found - set F0
+        RET					; | and return from subroutine
+
 ; ------------------------------ Manda Caracter --------------------------------
 
 sendCharacter :
