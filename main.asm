@@ -1,3 +1,4 @@
+
 ; -------------------------------- Repositorio ---------------------------------
 
 ; |
@@ -18,14 +19,14 @@
 ; ------------------------------ Inicio do programa --------------------------------
 
 org 0000H
-LJMP main
+LJMP MAPEIA
 
 org 0030h
 
 ; ------------------------------ Mapeia Teclado --------------------------------
 
 ; | MAPEAMENTO DAS TECLAS (salva os valores das teclas na memoria a partir do endereço 40h)
-
+MAPEIA: 
 MOV 40H, #'#' 
 MOV 41H, #'0'
 MOV 42H, #'*'
@@ -38,7 +39,7 @@ MOV 48H, #'4'
 MOV 49H, #'3'
 MOV 4AH, #'2'
 MOV 4BH, #'1'
-
+LJMP main
 ; ------------------------------ Mapeia Valores --------------------------------
 
 ; | Talvez desnecessário, analisar.
@@ -54,7 +55,43 @@ MOV 4BH, #'1'
 ; --------------------------------- Comparadores ---------------------------------
 
 ; | ARRUMAR ESTA PARTE DO CÓDIGO PARA NOSSAS NECESSIDADES
+setar_valores:
+MOV R0, #10
+MOV R1, #40h
+MOV A, 0
+loop_preco:
+ACALL VALOR
+INC R1
+MOV B, @R1
+DJNZ R0, loop_preco
+VALOR:
+CJNE @R1, #50h, fim
+ACALL checar_preco
+	checar_preco:
+	checar_coca:
+	CJNE R5, #40h, checar_pepsi
+	ADD A, 4
+	checar_pepsi:
+	CJNE R5, #41h, checar_sprite
+	ADD A, 5
+	checar_sprite:
+	CJNE R5, #42h, checar_monster
+	ADD A, 5
+	checar_monster:
+	CJNE R5, #43h, checar_redbull
+		ADD A, 5
+	checar_redbull:
+	CJNE R5, #44h, checar_sukita
+		ADD A, 5
+	checar_sukita:
+	CJNE R5, #45h, fim
+		ADD A, 5
+	ret
+fim:
+MOV 25H, A
+ret
 
+ 
 senha:
     MOV A, #06h ; | centralizado
  	ACALL posicionaCursor ; | escrever senha digitada na memoria
@@ -76,7 +113,10 @@ pressionado:
     MOV @R1, A ; | coloca o resultado de a no endereco de r1 
     INC R1 ; | incrementa r1 para ir pro prox endereço da senha guardada
     MOV A, R7      
-             
+    INC R6
+	MOV 50h, A 
+	MOV R5, A
+	ACALL VALOR  
  	ACALL sendCharacter 
  	CLR F0 ; | limpa f0 para nao dar problemas 
  	DJNZ R3, pressionado ; | DECREMENTA R3 E VOLTA
@@ -456,7 +496,7 @@ opcoes:
     MOV DPTR, #CANCELAR
     ACALL escreveString
     ACALL clearDisplay 
-
+	RET
 ; | Nega a transação caso o valor inserido esteja incorreto e reseta tudo.
 
 negou:
@@ -520,7 +560,7 @@ delay:
 main:
     ACALL lcd_init
     ACALL opcoes
-
+	ACALL pressionado
 JMP main
 
 ; ------------------------------- End of Main ---------------------------------
