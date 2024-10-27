@@ -51,6 +51,71 @@ MOV 4BH, #'1'
 
 ; --------------------------------- Subrotinas ---------------------------------
 
+; --------------------------------- Comparadores ---------------------------------
+
+; | ARRUMAR ESTA PARTE DO CÓDIGO PARA NOSSAS NECESSIDADES
+
+senha:
+    MOV A, #06h ; | centralizado
+ 	ACALL posicionaCursor ; | escrever senha digitada na memoria
+    ; | itera pela posicao de memoria do 40h para ver que valor o usuario digitou e salva-los nas posicao a partir da 60h
+    MOV R1, #60H
+	MOV R3, #4 ;4 repeticoes pq senha tem 4 digitos
+
+pressionado:
+	ACALL leituraTeclado
+	JNB F0, ESPERA_VE_PRESSIONADO  ; | if F0 is clear, jump to ESPERA_VE_PRESSIONADO
+    MOV A, #40h ; | pega endereço 40h e guarda ele em A
+	ADD A, R0 ; | adiciona em A o que ta no R0 (valor que a pessoa clicou)
+ 	MOV R0, A 
+	MOV A, @R0  ; | passa para A o conteudo do que tano endereçode R0
+                  
+    MOV R7, A ; | adiciona valor relacionado ao botao do teclado pressionado, que esta em a, no R7
+    MOV R2, #30H ; | coloca valor 30 no r2 
+    SUBB A, R2 ; | subtrai valor de a com 30 que ai da o valor pressionado (para restar somente o valor de fato (pessoa clica em 1 fica guardado 31)
+    MOV @R1, A ; | coloca o resultado de a no endereco de r1 
+    INC R1 ; | incrementa r1 para ir pro prox endereço da senha guardada
+    MOV A, R7      
+             
+ 	ACALL sendCharacter 
+ 	CLR F0 ; | limpa f0 para nao dar problemas 
+ 	DJNZ R3, ESPERA_VE_PRESSIONADO ; | DECREMENTA R3 E VOLTA
+	; | Parte para imitar um enter;(#23H = #)(pessoa apos escrever a senha tem que clicar no # para verificar se ta certa ou nao)
+	MOV R3, #23H
+; | itera pela label ate o valor de A ser igual ao de 03h
+
+enter:
+    CLR A
+ 	ACALL leituraTeclado
+    JNB F0, enter 
+    MOV A, #40h
+	ADD A, R0
+	MOV R0, A
+ 	MOV A, @R0  
+	CLR F0 ; | coloca clr f0 para dar certo
+    CJNE A, 03H, enter
+; | Parte onde comparamos a senha salva com os digitados pelo usuario 
+    MOV R3, #4 ; | loop 4x
+    MOV R0, #30H ; | valor 30 para ir ao endereço 30 e comparar (ta senha padrao)
+    MOV R1, #60H ; | senha que usuario digitou
+
+; | Pra comparar a "senha" (valor da compra, com zeros a esquerda até ter 4 digitos)
+compara:
+    MOV A, @R0 ; | lê o valor do endereço de R0 para A.
+    MOV 70H,@R1
+    CJNE A, 70H, errado; | DIFERENTE PULA
+    INC R0 ; | incrementa r0 para comparar o proximo valor da senha
+    INC R1  ; | incrementa r1 para comparar o prox valor da senha com valor digitado pelo user
+    DJNZ R3, compara ; | LOOP 4X 
+; | "Menu"
+; | Deve girar n*2 vezes conforme a quantidade de produtos
+ 	SETB P3.1 ; |  Gira motor no sentido horário se a pessoaa acerta a senha
+ 	CLR P3.0
+
+; | Completar
+errado:
+    LCALL negou
+
 ; ------------------------------ Leitura do teclado --------------------------------
      
 leituraTeclado:
