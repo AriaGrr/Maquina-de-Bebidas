@@ -39,56 +39,69 @@ MOV 48H, #'4'
 MOV 49H, #'3'
 MOV 4AH, #'2'
 MOV 4BH, #'1'
+MOV R6, #00
+MOV R5, #30h
+MOV 30H, #0
+MOV 31H, #0
+MOV 32H, #0
+MOV 33H, #0
+MOV 34H, #0
+MOV 35H, #0
+MOV 36H, #0
+MOV 37H, #0
+MOV 38H, #0
+MOV 39H, #0
+
 LJMP main
 ; ------------------------------ Mapeia Valores --------------------------------
 
 ; | Talvez desnecessário, analisar.
 ; | Valor inicial da conta do endereço 30 ao 33
 
- MOV 30H, #0
- MOV 31H, #0
- MOV 32H, #0
- MOV 33H, #0
+
 
 ; --------------------------------- Subrotinas ---------------------------------
 
 ; --------------------------------- Comparadores ---------------------------------
 
 ; | ARRUMAR ESTA PARTE DO CÓDIGO PARA NOSSAS NECESSIDADES
-setar_valores:
-MOV R0, #10
-MOV R1, #40h
-MOV A, 0
-loop_preco:
-ACALL VALOR
-INC R1
-MOV B, @R1
-DJNZ R0, loop_preco
-VALOR:
-CJNE @R1, #50h, fim
-ACALL checar_preco
-	checar_preco:
+
+checar_preco:
+	MOV B, R5
+	MOV R1, B
 	checar_coca:
-	CJNE R5, #40h, checar_pepsi
-	ADD A, 4
+	CJNE A, 4Bh, checar_pepsi
+	MOV @R1, #5
+	INC R6
+	INC R5
 	checar_pepsi:
-	CJNE R5, #41h, checar_sprite
-	ADD A, 5
+	CJNE A, 4Ah, checar_sprite
+	MOV @R1, #6
+	INC R6
+	INC R5
 	checar_sprite:
-	CJNE R5, #42h, checar_monster
-	ADD A, 5
+	CJNE A, 49h, checar_monster
+	MOV @R1, #4
+	INC R6
+	INC R5
 	checar_monster:
-	CJNE R5, #43h, checar_redbull
-		ADD A, 5
+	CJNE A, 45h, checar_redbull
+	 MOV @R1, #8
+	INC R6
+	INC R5
 	checar_redbull:
-	CJNE R5, #44h, checar_sukita
-		ADD A, 5
+	CJNE A, 46h, checar_sukita
+	MOV @R1, #7
+	INC R6
+	INC R5
 	checar_sukita:
-	CJNE R5, #45h, fim
-		ADD A, 5
-	ret
+	CJNE A, 48h, fim
+	MOV @R1, #3
+	INC R6
+	INC R5
+	
 fim:
-MOV 25H, A
+
 ret
 
  
@@ -113,10 +126,10 @@ pressionado:
     MOV @R1, A ; | coloca o resultado de a no endereco de r1 
     INC R1 ; | incrementa r1 para ir pro prox endereço da senha guardada
     MOV A, R7      
-    INC R6
-	MOV 50h, A 
-	MOV R5, A
-	ACALL VALOR  
+    
+	
+
+	ACALL checar_preco  
  	ACALL sendCharacter 
  	CLR F0 ; | limpa f0 para nao dar problemas 
  	DJNZ R3, pressionado ; | DECREMENTA R3 E VOLTA
