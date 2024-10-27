@@ -235,13 +235,13 @@ COCA:
 PEPSI:
     DB "2- Pepsi   R$ 6 "
     DB 0
-
-SUKITA: 
-    DB "3- Sukita  R$ 3 "
+    
+SPRITE:
+    DB "3- Sprite  R$ 4 "
     DB 0
 
-SPRITE:
-    DB "4- Sprite  R$ 4 "
+SUKITA: 
+    DB "4- Sukita  R$ 3 "
     DB 0
 
 REDBULL: 
