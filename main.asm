@@ -272,6 +272,14 @@ NEGADA:
     DB " NEGADA "
     DB 0
 
+RETIRE:
+    DB " RETIRE OS "
+    DB 0
+
+PRODUTOS:
+    DB "PRODUTOS ABAIXO"
+    DB 0
+
 ; ---------------------------------- Prints ------------------------------------
 
 opcoes:
@@ -331,7 +339,20 @@ opcoes:
     ACALL escreveString
     ACALL clearDisplay 
 
+; | Nega a transação caso o valor inserido esteja incorreto e reseta tudo.
+negou:
+    MOV A, #00h
+    ACALL posicionaCursor
+    MOV DPTR,#TRANSACAO ; | DPTR = Inicio da palavra 
+    ACALL escreveString
+    MOV A, #40h
+    ACALL posicionaCursor
+    MOV DPTR,#NEGADA
+    ACALL escreveString
+    ACALL delay
+    ACALL clearDisplay
 
+; | Se passar o motor deve girar conforme a quantidade de produtos vezes dois e após isso mostrar a mensagem para retirada.
 passou:
     MOV A, #00h
     ACALL posicionaCursor
@@ -344,17 +365,18 @@ passou:
     ACALL delay
     ACALL clearDisplay
 
-negou:
+retirada:
     MOV A, #00h
     ACALL posicionaCursor
-    MOV DPTR,#TRANSACAO ; | DPTR = Inicio da palavra 
+    MOV DPTR,#RETIRE ; | DPTR = Inicio da palavra 
     ACALL escreveString
     MOV A, #40h
     ACALL posicionaCursor
-    MOV DPTR,#NEGADA
+    MOV DPTR,#PRODUTOS
     ACALL escreveString
     ACALL delay
     ACALL clearDisplay
+
 
 ; | Fazer o display atualizar com valor e o número de produtos do pedido, conforme a pessoa aperta o teclado em sua primeira fase.
 
