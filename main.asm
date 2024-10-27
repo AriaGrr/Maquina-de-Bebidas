@@ -14,6 +14,7 @@
 
 
 ;------------------------------ Inicio do programa --------------------------------
+
 org 0000H
 LJMP main
 
@@ -37,6 +38,7 @@ MOV 4AH, #'2'
 MOV 4BH, #'1'
 
 ;------------------------------ Mapeia Valores --------------------------------
+
 ; | Talvez desnecessário, analisar.
 ; | Valor inicial da conta do endereço 30 ao 33
 
@@ -50,129 +52,133 @@ MOV 4BH, #'1'
 ;------------------------------ Manda Caracter --------------------------------
 
 sendCharacter :
-SETB RS ; | set RS: Indica que data esta sendo enviada para o modulo.
-MOV C, ACC.7 ; |
-MOV P1.7, C ; |
-MOV C, ACC.6 ; |
-MOV P1.6, C ; |
-MOV C, ACC.5 ; |
-MOV P1.5, C ; |
-MOV C, ACC.4 ; |
-MOV P1.4, C ; | high nibble set
-SETB EN ; |
-CLR EN	 ; | negative edge on E
-MOV C, ACC.3 ; |
-MOV P1.7, C ; |
-MOV C, ACC.2 ; |
-MOV P1.6, C ; |
-MOV C, ACC.1 ; |
-MOV P1.5, C ; |
-MOV C, ACC.0 ; |
-MOV P1.4, C ; | low nibble set
-SETB EN ; |
-CLR EN ; | negative edge on E
-CALL delay ; | Espera o BF dar clear
-RET
+    SETB RS ; | set RS: Indica que data esta sendo enviada para o modulo.
+    MOV C, ACC.7 ; |
+    MOV P1.7, C ; |
+    MOV C, ACC.6 ; |
+    MOV P1.6, C ; |
+    MOV C, ACC.5 ; |
+    MOV P1.5, C ; |
+    MOV C, ACC.4 ; |
+    MOV P1.4, C ; | high nibble set
+    SETB EN ; |
+    CLR EN	 ; | negative edge on E
+    MOV C, ACC.3 ; |
+    MOV P1.7, C ; |
+    MOV C, ACC.2 ; |
+    MOV P1.6, C ; |
+    MOV C, ACC.1 ; |
+    MOV P1.5, C ; |
+    MOV C, ACC.0 ; |
+    MOV P1.4, C ; | low nibble set
+    SETB EN ; |
+    CLR EN ; | negative edge on E
+    CALL delay ; | Espera o BF dar clear
+    RET
 
 ;-------------------------------- Inicia LCD ---------------------------------
 
 lcd_init:
-CLR RS
+    CLR RS
 
 ; | function set
-CLR P1.7
-CLR P1.6
-SETB P1.5
-CLR P1.4
+    CLR P1.7
+    CLR P1.6
+    SETB P1.5
+    CLR P1.4
 
-SETB EN
-CLR EN
+    SETB EN
+    CLR EN
 
-CALL delay
+    CALL delay
 
-SETB EN
-CLR EN
+    SETB EN
+    CLR EN
 
-SETB P1.7
+    SETB P1.7
 
-SETB EN
-CLR EN
+    SETB EN
+    CLR EN
 
-CALL delay
-CLR P1.7
-CLR P1.6
-CLR P1.5
-CLR P1.4
+    CALL delay
+    CLR P1.7
+    CLR P1.6
+    CLR P1.5
+    CLR P1.4
 
-SETB EN
-CLR EN
+    SETB EN
+    CLR EN
 
-SETB P1.6
-SETB P1.5
+    SETB P1.6
+    SETB P1.5
 
-SETB EN
-CLR EN
-CALL delay
+    SETB EN
+    CLR EN
+    CALL delay
 
 ; | Display on/o
 ; | The display
-CLR P1.7
-CLR P1.6
-CLR P1.5
-CLR P1.4
+    CLR P1.7
+    CLR P1.6
+    CLR P1.5
+    CLR P1.4
 
-SETB EN
-CLR EN
+    SETB EN
+    CLR EN
 
-SETB P1.7
-SETB P1.6
-SETB P1.5
-SETB P1.4
+    SETB P1.7
+    SETB P1.6
+    SETB P1.5
+    SETB P1.4
 
-SETB EN
-CLR EN
-CALL delay
-RET
+    SETB EN
+    CLR EN
+    CALL delay
+    RET
 
 ;-------------------------------- Escreve String ------------------------------------
 
 escreveString:
-MOV R2, #0
-rot:
-MOV A, R2
-MOVC A,@A+DPTR ; | Tabela de memoria do programa
-ACALL sendCharacter ; | Manda a data de A para o modulo
-INC R2
-JNZ rot ; | if A is 0, then end of data has been reached - jump out of loop
-RET
+    MOV R2, #0
+
+    rot:
+        MOV A, R2
+        MOVC A,@A+DPTR ; | Tabela de memoria do programa
+        ACALL sendCharacter ; | Manda a data de A para o modulo
+        INC R2
+        JNZ rot ; | if A is 0, then end of data has been reached - jump out of loop
+        RET
 
 ;-------------------------------- Posiciona cursor ---------------------------------
 
 posicionaCursor :
-CLR RS ; | clear RS - indicates that instruction is being sent to module
-SETB P1.7 ; |
-MOV C, ACC.6 ; |
-MOV P1.6, C ; |
-MOV C, ACC.5 ; |
-MOV P1.5, C ; |
-MOV C, ACC.4 ; |
-MOV P1.4, C ; | high nibble set
-SETB EN ; |
-CLR EN ; | negative edge on E
-MOV C, ACC.3 ; |
-MOV P1.7, C ; |
-MOV C, ACC.2 ; |
-MOV P1.6, C ; |
-MOV C, ACC.1 ; |
-MOV P1.5, C ; |
-MOV C, ACC.0 ; |
-MOV P1.4, C ; | low nibble set
+    CLR RS ; | clear RS - indicates that instruction is being sent to module
+    SETB P1.7 ; |
 
-SETB EN ; |
-CLR EN
+    MOV C, ACC.6 ; |
+    MOV P1.6, C ; |
+    MOV C, ACC.5 ; |
+    MOV P1.5, C ; |
+    MOV C, ACC.4 ; |
+    MOV P1.4, C ; | high nibble set
 
-CALL delay
-RET
+    SETB EN ; |
+    CLR EN ; | negative edge on E
+
+    MOV C, ACC.3 ; |
+    MOV P1.7, C ; |
+    MOV C, ACC.2 ; |
+    MOV P1.6, C ; |
+    MOV C, ACC.1 ; |
+    MOV P1.5, C ; |
+    MOV C, ACC.0 ; |
+    MOV P1.4, C ; | low nibble set
+
+    SETB EN ; |
+    CLR EN
+
+    CALL delay
+    RET
 
 ; | Limpa todo o display e retorna o cursor para primeira posicao
 
