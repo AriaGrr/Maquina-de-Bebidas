@@ -64,7 +64,7 @@ senha:
 
 pressionado:
 	ACALL leituraTeclado
-	JNB F0, ESPERA_VE_PRESSIONADO  ; | if F0 is clear, jump to ESPERA_VE_PRESSIONADO
+	JNB F0, pressionado  ; | if F0 is clear, jump to pressionado
     MOV A, #40h ; | pega endereço 40h e guarda ele em A
 	ADD A, R0 ; | adiciona em A o que ta no R0 (valor que a pessoa clicou)
  	MOV R0, A 
@@ -79,7 +79,7 @@ pressionado:
              
  	ACALL sendCharacter 
  	CLR F0 ; | limpa f0 para nao dar problemas 
- 	DJNZ R3, ESPERA_VE_PRESSIONADO ; | DECREMENTA R3 E VOLTA
+ 	DJNZ R3, pressionado ; | DECREMENTA R3 E VOLTA
 	; | Parte para imitar um enter;(#23H = #)(pessoa apos escrever a senha tem que clicar no # para verificar se ta certa ou nao)
 	MOV R3, #23H
 ; | itera pela label ate o valor de A ser igual ao de 03h
