@@ -1,4 +1,6 @@
 ; -------------------------------- Repositorio ---------------------------------
+
+; |
 ; | https://github.com/AriaGrr/Maquina-de-Bebidas
 ; | Colaboradores: 
 ; | Marjorie Luize Martins Costa
@@ -222,6 +224,15 @@ retornaCursor :
     CALL delay ; wait for BF to clear
     RET
 
+; ----------------------------------- Rotação do Motor ----------------------------------
+
+; | A cada rotação do motor retira 1 da quantidade de itens, enquanto a quantidade não for 0, o motor deve girar.
+
+; | Espera por um sinal de rotação completa no pino P3.2
+rotacao:
+    JNB P3.2, rotacao ; | Espera até que sensor no pino P3.2 indique a rotação completa
+	CLR P3.1  ; | Parar o motor
+       
 ; ----------------------------------- Bebidas e + ----------------------------------
 
 CONFERE:
