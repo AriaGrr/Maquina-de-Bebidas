@@ -340,6 +340,7 @@ opcoes:
     ACALL clearDisplay 
 
 ; | Nega a transação caso o valor inserido esteja incorreto e reseta tudo.
+
 negou:
     MOV A, #00h
     ACALL posicionaCursor
@@ -353,6 +354,7 @@ negou:
     ACALL clearDisplay
 
 ; | Se passar o motor deve girar conforme a quantidade de produtos vezes dois e após isso mostrar a mensagem para retirada.
+
 passou:
     MOV A, #00h
     ACALL posicionaCursor
