@@ -123,13 +123,15 @@ checar_preco:
 	INC R5
 
 	checar_sukita:
-	CJNE A, 48h, checar_soma
+	CJNE A, 48h, checar_remocao
 	MOV @R1, #3
 	INC R6
 	INC R5
-	checar_soma:
-	CJNE A, 40h, fim
-	ACALL somar_preco
+	checar_remocao:
+	CJNE A, 41h, fim
+	DEC R1
+	DEC R5
+
 	
 fim:
 ret
@@ -142,8 +144,17 @@ MOV A, #0
 loop_soma:
 ADD A, @R1
 INC R1
+MOV R3, A
 DJNZ R0, loop_soma
-
+dividir:
+MOV B, #10
+DIV AB
+MOV @R0, A
+INC R0
+MOV @R0, B
+ACALL sendCharacter
+ACALL escreveString
+ret
 pressionado_1:
 	ACALL leituraTeclado
 	JNB F0, pressionado_1  ; | if F0 is clear, jump to pressionado_1
@@ -160,7 +171,7 @@ pressionado_1:
     MOV A, R7      
     
 	ACALL checar_preco  
- 	ACALL sendCharacter 
+ 	;ACALL sendCharacter 
  	CLR F0 ; | limpa f0 para nao dar problemas 
  	DJNZ R3, pressionado_1 ; | DECREMENTA R3 E VOLTA
 	; | Parte para imitar um enter;(#23H = #)(pessoa apos escrever a senha tem que clicar no # para verificar se ta certa ou nao)
