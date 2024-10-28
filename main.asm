@@ -30,12 +30,17 @@ org 0030h
 reset: 
 ; | Limpar os registradores (se tiver mais coisas que são usadas e precisa limpar taca aqui)
     clr A
-    clr B
-    clr R0
-    clr R1
-; | Desabilitar todas as interrupções
-    EA = 0
 
+    
+; | Desabilitar todas as interrupções
+    ;EA EQU 0
+	MOV R0, #0
+	MOV R1, #0
+	MOV R2, #0
+	MOV R3, #0
+	MOV R4, #0
+	MOV R5, #20h
+	MOV R7, #0
     MOV 40H, #'#' 
     MOV 41H, #'0'
     MOV 42H, #'*'
@@ -50,7 +55,7 @@ reset:
     MOV 4BH, #'1'
 
     MOV R6, #00
-    MOV R5, #30h
+    ;MOV R5, #30h
     MOV 30H, #0
     MOV 31H, #0
     MOV 32H, #0
@@ -61,7 +66,12 @@ reset:
     MOV 37H, #0
     MOV 38H, #0
     MOV 39H, #0
-
+	MOV 20H, #0
+	MOV 21H, #0
+	MOV 22H, #0
+	MOV 23H, #0
+	MOV 24H, #0
+	MOV 25H, #0
 ; | Saltar para o início do programa principal
     LJMP main
 
@@ -102,7 +112,7 @@ checar_preco:
 
 	checar_monster:
 	CJNE A, 45h, checar_redbull
-	 MOV @R1, #8
+	MOV @R1, #8
 	INC R6
 	INC R5
 
@@ -113,13 +123,26 @@ checar_preco:
 	INC R5
 
 	checar_sukita:
-	CJNE A, 48h, fim
+	CJNE A, 48h, checar_soma
 	MOV @R1, #3
 	INC R6
 	INC R5
+	checar_soma:
+	CJNE A, 40h, fim
+	ACALL somar_preco
 	
 fim:
 ret
+
+somar_preco:
+MOV B, R6
+MOV R0, B
+MOV R1, #20h
+MOV A, #0
+loop_soma:
+ADD A, @R1
+INC R1
+DJNZ R0, loop_soma
 
 pressionado_1:
 	ACALL leituraTeclado
@@ -133,7 +156,7 @@ pressionado_1:
     MOV R2, #30H ; | coloca valor 30 no r2 
     SUBB A, R2 ; | subtrai valor de a com 30 que ai da o valor pressionado_1 (para restar somente o valor de fato pessoa clica em 1 fica guardado 31)
     MOV @R1, A ; | coloca o resultado de a no endereco de r1 
-    INC R1 ; | incrementa r1 para ir pro prox endereço da senha guardada
+    INC R1 ; | incrementa r1 para ir pro prox endereço de valor guardado
     MOV A, R7      
     
 	ACALL checar_preco  
@@ -144,10 +167,27 @@ pressionado_1:
 	MOV R3, #23H
 ; | itera pela label ate o valor de A ser igual ao de 03h
 
+; | Quando enter é pressionado no pressionado_1 vem pro pressionado_2
+pressionado_2:
+	ACALL leituraTeclado
+	JNB F0, 2  ; | if F0 is clear, jump to 2
+    MOV A, #40h ; | pega endereço 40h e guarda ele em A
+	ADD A, R0 ; | adiciona em A o que ta no R0 (valor que a pessoa clicou)
+ 	MOV R0, A 
+	MOV A, @R0  ; | passa para A o conteudo do que está no endereço de R0
+                  
+    MOV R7, A ; | adiciona valor relacionado ao botao do teclado 2, que esta em a, no R7
+    MOV R2, #30H ; | coloca valor 30 no r2 
+    SUBB A, R2 ; | subtrai valor de a com 30 que ai da o valor 2 (para restar somente o valor de fato pessoa clica em 1 fica guardado 31)
+    MOV @R1, A ; | coloca o resultado de a no endereco de r1 
+    INC R1 ; | incrementa r1 para ir pro prox endereço de valor guardado
+    MOV A, R7 
+
 enter:
     CLR A
  	ACALL leituraTeclado
     JNB F0, enter 
+	ACALL somar_preco
     MOV A, #40h
 	ADD A, R0
 	MOV R0, A
