@@ -517,6 +517,12 @@ PRODUTOS:
     DB "PRODUTOS ABAIXO"
     DB 0
 
+AVISO:
+DB " Compras de ate"
+DB 0
+AVISO_2:
+DB "R$99 apenas"
+DB 0
 ; ---------------------------------- Prints ---------------------------------------
 
 opcoes:
@@ -561,6 +567,8 @@ opcoes:
     MOV DPTR, #MONSTER
     ACALL escreveString
     ACALL clearDisplay 
+	ACALL delay
+
 ; | Fim
 
     ACALL delay
@@ -575,6 +583,17 @@ opcoes:
     MOV DPTR, #CANCELAR
     ACALL escreveString
     ACALL clearDisplay 
+	ACALL delay
+	MOV A, #00h
+	ACALL posicionaCursor
+	MOV DPTR, #AVISO
+	ACALL escreveString
+	ACALL delay
+	MOV A, #40h
+	ACALL posicionaCursor
+	MOV DPTR, #AVISO_2
+	ACALL escreveString
+	ACALL delay
 	RET
 ; | Nega a transação caso o valor inserido esteja incorreto e reseta tudo.
 
