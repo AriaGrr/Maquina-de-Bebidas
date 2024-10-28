@@ -30,13 +30,7 @@ org 0030h
 reset: 
 ; | Limpar os registradores (se tiver mais coisas que são usadas e precisa limpar taca aqui)
     clr A
-    clr B
-    clr R0
-    clr R1
     
-; | Desabilitar todas as interrupções
-    EA = 0
-
     MOV 40H, #'#' 
     MOV 41H, #'0'
     MOV 42H, #'*'
@@ -175,7 +169,6 @@ enter:
     MOV R3, #4 ; | loop 4x
     MOV R0, #30H ; | valor 30 para ir ao endereço 30 e comparar (ta senha padrao)
     MOV R1, #60H ; | senha que usuario digitou
-
 
 senha:
     MOV A, #06h ; | centralizado
@@ -585,8 +578,39 @@ retirada:
 
 ; | Fazer o display atualizar com valor e o número de produtos do pedido, conforme a pessoa aperta o teclado em sua primeira fase.
 
-; ---------------------------------- Delay ------------------------------------
+; ---------------------------------- Leds ------------------------------------
 
+; | Função para acender um LED específico no port P2
+acender:
+    MOV A, R0 ; | Assumindo que o número do pino está em R0
+    MOV P2, A
+    ACALL delays
+    MOV P2, #0FFH 
+    ACALL delay
+    RET
+
+; | Chamada da função para acender o LED no pino P2
+; | Converte o número das portas que quer acender (0 ligado, 1 desligado) do binario 8 casas para hexadecimal e passa para a porta dos leds
+; | 00H liga tudo, 0FFH desliga tudo
+
+verde:
+    MOV R0, #0DBH 
+    CALL acender
+    RET
+
+vermelho:
+    MOV R0, #0B6H 
+    CALL acender
+    RET
+
+amarelo:
+    MOV R0, #06DH 
+    CALL acender
+    RET
+
+; ---------------------------------- Delays ------------------------------------
+
+; | Delay normal
 delay:
     MOV R1, #50
     MOV R0, #50
@@ -598,12 +622,23 @@ delay:
     DJNZ R4, $
     RET
 
+delays:
+    ;ACALL delay
+    ;ACALL delay
+    ACALL delay
+    ACALL delay
+    ACALL delay ; | Chamar a subrotina de delay
+    RET 
+
 ; ----------------------------- End of subroutines -----------------------------
 
 ; ---------------------------------- Main --------------------------------------
 
 main:
     ACALL lcd_init
+    ;ACALL vermelho
+    ;ACALL verde
+    ;ACALL amarelo
     ACALL opcoes
 	ACALL pressionado_1
 JMP main
