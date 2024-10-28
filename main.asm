@@ -636,9 +636,6 @@ delays:
 
 main:
     ACALL lcd_init
-    ;ACALL vermelho
-    ;ACALL verde
-    ;ACALL amarelo
     ACALL opcoes
 	ACALL pressionado_1
 JMP main
