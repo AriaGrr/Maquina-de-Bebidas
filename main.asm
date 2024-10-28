@@ -19,48 +19,60 @@
 ; ------------------------------ Inicio do programa --------------------------------
 
 org 0000H
-LJMP MAPEIA
+LJMP reset
 
 org 0030h
 
-; ------------------------------ Mapeia Teclado --------------------------------
+; ------------------------------ Reseta e Mapeia Teclado --------------------------------
 
 ; | MAPEAMENTO DAS TECLAS (salva os valores das teclas na memoria a partir do endereço 40h)
-MAPEIA: 
-MOV 40H, #'#' 
-MOV 41H, #'0'
-MOV 42H, #'*'
-MOV 43H, #'9'
-MOV 44H, #'8'
-MOV 45H, #'7'
-MOV 46H, #'6'
-MOV 47H, #'5'
-MOV 48H, #'4'
-MOV 49H, #'3'
-MOV 4AH, #'2'
-MOV 4BH, #'1'
-MOV R6, #00
-MOV R5, #30h
-MOV 30H, #0
-MOV 31H, #0
-MOV 32H, #0
-MOV 33H, #0
-MOV 34H, #0
-MOV 35H, #0
-MOV 36H, #0
-MOV 37H, #0
-MOV 38H, #0
-MOV 39H, #0
 
-LJMP main
-; ------------------------------ Mapeia Valores --------------------------------
+reset: 
+; | Limpar os registradores (se tiver mais coisas que são usadas e precisa limpar taca aqui)
+    clr A
+    clr B
+    clr R0
+    clr R1
+; | Desabilitar todas as interrupções
+    EA = 0
+
+    MOV 40H, #'#' 
+    MOV 41H, #'0'
+    MOV 42H, #'*'
+    MOV 43H, #'9'
+    MOV 44H, #'8'
+    MOV 45H, #'7'
+    MOV 46H, #'6'
+    MOV 47H, #'5'
+    MOV 48H, #'4'
+    MOV 49H, #'3'
+    MOV 4AH, #'2'
+    MOV 4BH, #'1'
+
+    MOV R6, #00
+    MOV R5, #30h
+    MOV 30H, #0
+    MOV 31H, #0
+    MOV 32H, #0
+    MOV 33H, #0
+    MOV 34H, #0
+    MOV 35H, #0
+    MOV 36H, #0
+    MOV 37H, #0
+    MOV 38H, #0
+    MOV 39H, #0
+
+; | Saltar para o início do programa principal
+    LJMP main
+
+; ------------------------------ Mapeia Valores ----------------------------------
 
 ; | Talvez desnecessário, analisar.
 ; | Valor inicial da conta do endereço 30 ao 33
 
 
 
-; --------------------------------- Subrotinas ---------------------------------
+; --------------------------------- Subrotinas -----------------------------------
 
 ; --------------------------------- Comparadores ---------------------------------
 
@@ -69,31 +81,37 @@ LJMP main
 checar_preco:
 	MOV B, R5
 	MOV R1, B
+
 	checar_coca:
 	CJNE A, 4Bh, checar_pepsi
 	MOV @R1, #5
 	INC R6
 	INC R5
+
 	checar_pepsi:
 	CJNE A, 4Ah, checar_sprite
 	MOV @R1, #6
 	INC R6
 	INC R5
+
 	checar_sprite:
 	CJNE A, 49h, checar_monster
 	MOV @R1, #4
 	INC R6
 	INC R5
+
 	checar_monster:
 	CJNE A, 45h, checar_redbull
 	 MOV @R1, #8
 	INC R6
 	INC R5
+
 	checar_redbull:
 	CJNE A, 46h, checar_sukita
 	MOV @R1, #7
 	INC R6
 	INC R5
+
 	checar_sukita:
 	CJNE A, 48h, fim
 	MOV @R1, #3
@@ -101,38 +119,27 @@ checar_preco:
 	INC R5
 	
 fim:
-
 ret
 
- 
-senha:
-    MOV A, #06h ; | centralizado
- 	ACALL posicionaCursor ; | escrever senha digitada na memoria
-    ; | itera pela posicao de memoria do 40h para ver que valor o usuario digitou e salva-los nas posicao a partir da 60h
-    MOV R1, #60H
-	MOV R3, #4 ;4 repeticoes pq senha tem 4 digitos
-
-pressionado:
+pressionado_1:
 	ACALL leituraTeclado
-	JNB F0, pressionado  ; | if F0 is clear, jump to pressionado
+	JNB F0, pressionado_1  ; | if F0 is clear, jump to pressionado_1
     MOV A, #40h ; | pega endereço 40h e guarda ele em A
 	ADD A, R0 ; | adiciona em A o que ta no R0 (valor que a pessoa clicou)
  	MOV R0, A 
-	MOV A, @R0  ; | passa para A o conteudo do que tano endereçode R0
+	MOV A, @R0  ; | passa para A o conteudo do que está no endereço de R0
                   
-    MOV R7, A ; | adiciona valor relacionado ao botao do teclado pressionado, que esta em a, no R7
+    MOV R7, A ; | adiciona valor relacionado ao botao do teclado pressionado_1, que esta em a, no R7
     MOV R2, #30H ; | coloca valor 30 no r2 
-    SUBB A, R2 ; | subtrai valor de a com 30 que ai da o valor pressionado (para restar somente o valor de fato (pessoa clica em 1 fica guardado 31)
+    SUBB A, R2 ; | subtrai valor de a com 30 que ai da o valor pressionado_1 (para restar somente o valor de fato pessoa clica em 1 fica guardado 31)
     MOV @R1, A ; | coloca o resultado de a no endereco de r1 
     INC R1 ; | incrementa r1 para ir pro prox endereço da senha guardada
     MOV A, R7      
     
-	
-
 	ACALL checar_preco  
  	ACALL sendCharacter 
  	CLR F0 ; | limpa f0 para nao dar problemas 
- 	DJNZ R3, pressionado ; | DECREMENTA R3 E VOLTA
+ 	DJNZ R3, pressionado_1 ; | DECREMENTA R3 E VOLTA
 	; | Parte para imitar um enter;(#23H = #)(pessoa apos escrever a senha tem que clicar no # para verificar se ta certa ou nao)
 	MOV R3, #23H
 ; | itera pela label ate o valor de A ser igual ao de 03h
@@ -151,6 +158,14 @@ enter:
     MOV R3, #4 ; | loop 4x
     MOV R0, #30H ; | valor 30 para ir ao endereço 30 e comparar (ta senha padrao)
     MOV R1, #60H ; | senha que usuario digitou
+
+
+senha:
+    MOV A, #06h ; | centralizado
+ 	ACALL posicionaCursor ; | escrever senha digitada na memoria
+    ; | itera pela posicao de memoria do 40h para ver que valor o usuario digitou e salva-los nas posicao a partir da 60h
+    MOV R1, #60H
+	MOV R3, #4 ;4 repeticoes pq senha tem 4 digitos
 
 ; | Pra comparar a "senha" (valor da compra, com zeros a esquerda até ter 4 digitos)
 compara:
@@ -298,7 +313,7 @@ lcd_init:
     CALL delay
     RET
 
-; -------------------------------- Escreve String ------------------------------------
+; -------------------------------- Escreve String ----------------------------------
 
 escreveString:
     MOV R2, #0
@@ -311,7 +326,7 @@ escreveString:
         JNZ rot ; | if A is 0, then end of data has been reached - jump out of loop
         RET
 
-; -------------------------------- Posiciona cursor ---------------------------------
+; -------------------------------- Posiciona cursor --------------------------------
 
 posicionaCursor :
     CLR RS ; | clear RS - indicates that instruction is being sent to module
@@ -384,7 +399,7 @@ retornaCursor :
     CALL delay ; wait for BF to clear
     RET
 
-; ----------------------------------- Rotação do Motor ----------------------------------
+; ------------------------------- Rotação do Motor ---------------------------------
 
 ; | A cada rotação do motor retira 1 da quantidade de itens, enquanto a quantidade não for 0, o motor deve girar.
 
@@ -451,7 +466,7 @@ PRODUTOS:
     DB "PRODUTOS ABAIXO"
     DB 0
 
-; ---------------------------------- Prints ------------------------------------
+; ---------------------------------- Prints ---------------------------------------
 
 opcoes:
     MOV A, #00h
@@ -566,14 +581,14 @@ delay:
     DJNZ R4, $
     RET
 
-; ----------------------------------- End of subroutines -----------------------
+; ----------------------------- End of subroutines -----------------------------
 
-; ---------------------------------- Main -------------------------------------
+; ---------------------------------- Main --------------------------------------
 
 main:
     ACALL lcd_init
     ACALL opcoes
-	ACALL pressionado
+	ACALL pressionado_1
 JMP main
 
-; ------------------------------- End of Main ---------------------------------
+; ------------------------------- End of Main ----------------------------------
