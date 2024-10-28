@@ -33,6 +33,7 @@ reset:
     clr B
     clr R0
     clr R1
+    
 ; | Desabilitar todas as interrupções
     EA = 0
 
@@ -102,7 +103,7 @@ checar_preco:
 
 	checar_monster:
 	CJNE A, 45h, checar_redbull
-	 MOV @R1, #8
+	MOV @R1, #8
 	INC R6
 	INC R5
 
