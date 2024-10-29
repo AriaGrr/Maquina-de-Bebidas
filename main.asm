@@ -89,53 +89,68 @@ reset:
 
 ; | ARRUMAR ESTA PARTE DO CÓDIGO PARA NOSSAS NECESSIDADES
 
-checar_preco:
+checar_tecla1:
 	MOV B, R5
-	MOV R1, B
+	MOV R0, B
+	MOV R4, A
+	checar_remocao:
+	CJNE A, 41h, checar_limite
+	DEC R0
+	MOV @R0, #0h
+	DEC R5	
+	RET
 	checar_limite:
-	CJNE R6, #3, checar_limite
+	MOV 10h, #3
+	MOV A, R6
+	CJNE A, 10h , checar_coca
 	MOV DPTR, #CHEIO
+	ACALL delay
+	ACALL clearDisplay
+	MOV A, #00h
+	ACALL posicionaCursor
+	ACALL delay
 	ACALL escreveString
-	
+	RET
 	checar_coca:
+	MOV A, R4
 	CJNE A, 4Bh, checar_pepsi
-	MOV @R1, #5
+	MOV @R0, #5
 	INC R6
 	INC R5
-
+	RET
 	checar_pepsi:
 	CJNE A, 4Ah, checar_sprite
-	MOV @R1, #6
+	MOV @R0, #6
 	INC R6
 	INC R5
-
+	RET
 	checar_sprite:
 	CJNE A, 49h, checar_monster
-	MOV @R1, #4
+	MOV @R0, #4
 	INC R6
 	INC R5
-
+	RET
 	checar_monster:
 	CJNE A, 45h, checar_redbull
-	MOV @R1, #8
+	MOV @R0, #8
 	INC R6
 	INC R5
-
+	RET
 	checar_redbull:
 	CJNE A, 46h, checar_sukita
-	MOV @R1, #7
+	MOV @R0, #7
 	INC R6
 	INC R5
-
+	RET
 	checar_sukita:
-	CJNE A, 48h, checar_remocao
-	MOV @R1, #3
+	CJNE A, 48h, checkout
+	MOV @R0, #3
 	INC R6
 	INC R5
-	checar_remocao:
-	CJNE A, 41h, fim
-	DEC R1
-	DEC R5
+	RET
+	checkout:
+	CJNE A, 
+	
 
 	
 fim:
@@ -175,7 +190,7 @@ pressionado_1:
     INC R1 ; | incrementa r1 para ir pro prox endereço de valor guardado
     MOV A, R7      
     
-	ACALL checar_preco  
+	ACALL checar_tecla1
  	;ACALL sendCharacter 
  	CLR F0 ; | limpa f0 para nao dar problemas 
  	DJNZ R3, pressionado_1 ; | DECREMENTA R3 E VOLTA
@@ -526,7 +541,7 @@ AVISO:
 DB " Compras de ate"
 DB 0
 AVISO_2:
-DB "R$99 apenas"
+DB "3 itens"
 DB 0
 CHEIO:
 DB "Limite excedido"
@@ -575,7 +590,7 @@ opcoes:
     MOV DPTR, #MONSTER
     ACALL escreveString
     ACALL clearDisplay 
-	ACALL delay
+		ACALL delay
 
 ; | Fim
 
@@ -601,6 +616,7 @@ opcoes:
 	ACALL posicionaCursor
 	MOV DPTR, #AVISO_2
 	ACALL escreveString
+	ACALL clearDisplay
 	ACALL delay
 	RET
 ; | Nega a transação caso o valor inserido esteja incorreto e reseta tudo.
