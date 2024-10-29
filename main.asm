@@ -94,65 +94,64 @@ checar_tecla1:
 	MOV R0, B
 	MOV R4, A
 	checar_remocao:
-	CJNE A, 41h, checar_limite
-	DEC R0
-	MOV @R0, #0h
-	DEC R5	
-	RET
+        CJNE A, 41h, checar_limite
+        DEC R0
+        MOV @R0, #0h
+        DEC R5	
+        RET
 	checar_limite:
-	MOV 10h, #3
-	MOV A, R6
-	CJNE A, 10h , checar_coca
-	MOV DPTR, #CHEIO
-	ACALL delay
-	ACALL clearDisplay
-	MOV A, #00h
-	ACALL posicionaCursor
-	ACALL delay
-	ACALL escreveString
-	RET
+        MOV 10h, #3
+        MOV A, R6
+        CJNE A, 10h , checar_coca
+        MOV DPTR, #CHEIO
+        ACALL delay
+        ACALL clearDisplay
+        MOV A, #00h
+        ACALL posicionaCursor
+        ACALL delay
+        ACALL escreveString
+        RET
 	checar_coca:
-	MOV A, R4
-	CJNE A, 4Bh, checar_pepsi
-	MOV @R0, #5
-	INC R6
-	INC R5
-	RET
+        MOV A, R4
+        CJNE A, 4Bh, checar_pepsi
+        MOV @R0, #5
+        INC R6
+        INC R5
+        RET
 	checar_pepsi:
-	CJNE A, 4Ah, checar_sprite
-	MOV @R0, #6
-	INC R6
-	INC R5
-	RET
+        CJNE A, 4Ah, checar_sprite
+        MOV @R0, #6
+        INC R6
+        INC R5
+        RET
 	checar_sprite:
-	CJNE A, 49h, checar_monster
-	MOV @R0, #4
-	INC R6
-	INC R5
-	RET
+        CJNE A, 49h, checar_monster
+        MOV @R0, #4
+        INC R6
+        INC R5
+        RET
 	checar_monster:
-	CJNE A, 45h, checar_redbull
-	MOV @R0, #8
-	INC R6
-	INC R5
-	RET
+        CJNE A, 45h, checar_redbull
+        MOV @R0, #8
+        INC R6
+        INC R5
+        RET
 	checar_redbull:
-	CJNE A, 46h, checar_sukita
-	MOV @R0, #7
-	INC R6
-	INC R5
-	RET
+        CJNE A, 46h, checar_sukita
+        MOV @R0, #7
+        INC R6
+        INC R5
+        RET
 	checar_sukita:
-	CJNE A, 48h, checkout
-	MOV @R0, #3
-	INC R6
-	INC R5
-	RET
+        CJNE A, 48h, checkout
+        MOV @R0, #3
+        INC R6
+        INC R5
+        RET
 	checkout:
-	CJNE A, 
-	
-fim:
-ret
+        CJNE A, 
+    fim:
+    ret
 
 somar_preco:
     MOV B, R6
