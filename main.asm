@@ -1,4 +1,5 @@
 
+
 ; -------------------------------- Repositorio ---------------------------------
 
 ; |
@@ -91,7 +92,11 @@ reset:
 checar_preco:
 	MOV B, R5
 	MOV R1, B
-
+	checar_limite:
+	CJNE R6, #3, checar_limite
+	MOV DPTR, #CHEIO
+	ACALL escreveString
+	
 	checar_coca:
 	CJNE A, 4Bh, checar_pepsi
 	MOV @R1, #5
@@ -523,6 +528,9 @@ DB 0
 AVISO_2:
 DB "R$99 apenas"
 DB 0
+CHEIO:
+DB "Limite excedido"
+DB 0 
 ; ---------------------------------- Prints ---------------------------------------
 
 opcoes:
