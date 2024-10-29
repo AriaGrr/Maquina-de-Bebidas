@@ -662,8 +662,57 @@ retirada:
 
 ; | Fazer o display atualizar com valor e o número de produtos do pedido, conforme a pessoa aperta o teclado em sua primeira fase.
 
-; ---------------------------------- Delay ------------------------------------
+; ---------------------------------- Leds ------------------------------------
 
+; | Função para acender um LED específico no port P2
+acender:
+    MOV A, R0 ; | Assumindo que o número do pino está em R0
+    MOV P2, A
+    ACALL delays
+    ;ACALL delay
+    RET
+
+; | Apaga todos os leds
+apagar:
+    ACALL delay
+    MOV P2, #0FFH 
+    RET
+
+; | Chamada da função para acender o LED no pino P2
+; | Converte o número das portas que quer acender (0 ligado, 1 desligado) do binario 8 casas para hexadecimal e passa para a porta dos leds
+; | 00H liga tudo, 0FFH desliga tudo
+
+verde:
+    MOV R0, #0DFH 
+    CALL acender
+    MOV R0, #0DBH 
+    CALL acender
+    CALL apagar
+    RET
+
+vermelho:
+    MOV R0, #0BFH 
+    CALL acender
+    MOV R0, #0B7H 
+    CALL acender
+    MOV R0, #0B6H 
+    CALL acender
+    CALL apagar
+    RET
+
+amarelo:
+    MOV R0, #07FH 
+    CALL acender
+    MOV R0, #06FH 
+    CALL acender
+    MOV R0, #06DH 
+    CALL acender
+    CALL apagar
+    RET
+
+; ---------------------------------- Delays ------------------------------------
+
+; | Delay normal
 delay:
     MOV R1, #50
     MOV R0, #50
@@ -674,6 +723,14 @@ delay:
     DJNZ R3, $
     DJNZ R4, $
     RET
+
+delays:
+    ;ACALL delay
+    ;ACALL delay
+    ACALL delay
+    ACALL delay
+    ACALL delay ; | Chamar a subrotina de delay
+    RET 
 
 ; ----------------------------- End of subroutines -----------------------------
 
