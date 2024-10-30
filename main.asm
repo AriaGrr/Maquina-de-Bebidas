@@ -95,9 +95,10 @@ checar_tecla1:
 	MOV R4, A
 	checar_remocao:
         CJNE A, 41h, checar_limite
-        DEC R0
-        MOV @R0, #0h
-        DEC R5	
+		DEC R0
+	    MOV @R0, #0h
+        DEC R5
+		DEC R6
         RET
 	checar_limite:
         MOV 10h, #3
@@ -143,13 +144,15 @@ checar_tecla1:
         INC R5
         RET
 	checar_sukita:
-        CJNE A, 48h, checkout
+        CJNE A, 48h, fim
         MOV @R0, #3
         INC R6
         INC R5
         RET
 	checkout:
-        CJNE A, 
+        CJNE A, 40h, fim
+		ACALL somar_preco
+		ACALL pressionado_2 
     fim:
     ret
 
