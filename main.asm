@@ -529,6 +529,14 @@ PAGAR:
     DB "#-    Pagar    "
     DB 0
 
+ZERO:
+DB " 0-   Retirar "
+DB 0
+
+AVISO:
+DB " Ate tres itens"
+DB 0
+
 TRANSACAO:
     DB " TRANSACAO "
     DB 0
@@ -549,12 +557,6 @@ PRODUTOS:
     DB "PRODUTOS ABAIXO"
     DB 0
 
-AVISO:
-DB " Compras de ate"
-DB 0
-AVISO_2:
-DB "3 itens"
-DB 0
 CHEIO:
 DB "Limite excedido"
 DB 0 
@@ -621,12 +623,12 @@ opcoes:
 	ACALL delay
 	MOV A, #00h
 	ACALL posicionaCursor
-	MOV DPTR, #AVISO
+	MOV DPTR, #ZERO
 	ACALL escreveString
 	ACALL delay
 	MOV A, #40h
 	ACALL posicionaCursor
-	MOV DPTR, #AVISO_2
+	MOV DPTR, #AVISO
 	ACALL escreveString
 	ACALL clearDisplay
 	ACALL delay
