@@ -94,12 +94,20 @@ checar_tecla1:
 	MOV R0, B
 	MOV R4, A
 	checar_remocao:
-        CJNE A, 41h, checar_limite
+        CJNE A, 41h, checar_reset
 		DEC R0
 	    MOV @R0, #0h
         DEC R5
 		DEC R6
         RET
+	checar_reset:
+	CJNE A, 42h, checkout
+	LJMP reset
+	checkout:
+        CJNE A, 40h, checar_limite
+		MOV 25h, R6
+		ACALL somar_preco
+		LJMP pressionado_2
 	checar_limite:
         MOV 10h, #3
         MOV A, R6
@@ -112,6 +120,8 @@ checar_tecla1:
         ACALL delay
         ACALL escreveString
         RET
+
+	
 	checar_coca:
         MOV A, R4
         CJNE A, 4Bh, checar_pepsi
@@ -149,14 +159,13 @@ checar_tecla1:
         INC R6
         INC R5
         RET
-	checkout:
-        CJNE A, 40h, fim
-		ACALL somar_preco
-		ACALL pressionado_2 
+
+		
     fim:
     ret
 
 somar_preco:
+	
     MOV B, R6
     MOV R0, B
     MOV R1, #20h
@@ -170,11 +179,12 @@ somar_preco:
 dividir:
     MOV B, #10
     DIV AB
-    MOV @R0, A
-    INC R0
-    MOV @R0, B
-    ACALL sendCharacter
-    ACALL escreveString
+	MOV 30h, #0	
+	MOV 31h, #0
+    MOV 32h, A
+    ;INC R0
+    MOV 33h, B
+
     ret
 
 pressionado_1:
