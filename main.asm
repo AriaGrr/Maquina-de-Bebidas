@@ -170,7 +170,6 @@ checar_tecla1:
     ret
 
 somar_preco:
-	
     MOV B, R6
     MOV R0, B
     MOV R1, #20h
@@ -190,8 +189,8 @@ dividir:
 	;ACALL sendCharacter
     ;INC R0
     MOV 33h, B
-
     ret
+
 checar_tecla2:
 	MOV B, R5
 	MOV R0, B
@@ -335,6 +334,14 @@ pressionado_2:
     MOV A, R7 
 	ACALL checar_tecla2
 	JMP pressionado_2
+
+    ; | Comentando
+ 	;CLR F0 ; | limpa f0 para nao dar problemas 
+ 	;DJNZ R3, pressionado_2 ; | DECREMENTA R3 E VOLTA
+	; | Parte para imitar um enter;(#23H = #)(pessoa apos escrever a senha tem que clicar no # para verificar se ta certa ou nao)
+	;MOV R3, #23H
+; | itera pela label ate o valor de A ser igual ao de 03h
+
 enter:
     CLR A
  	ACALL leituraTeclado
@@ -602,10 +609,6 @@ rotacao:
        
 ; ----------------------------------- Bebidas e + ----------------------------------
 
-CONFERE:
-    DB " " ; | O valor (senha) terá quatro digitos, sendo compostos pelo valor da conta em si, e caso o valor da conta não tenha 4 digitos, adicione um 0 ao começo dele.
-    DB 00h ; | Declara string, e lê até o fim
-
 COCA:
     DB "1- Coca    R$ 5 "
     DB 0 ; | Caracter null indica fim da String
@@ -638,6 +641,14 @@ PAGAR:
     DB "#-    Pagar    "
     DB 0
 
+ZERO:
+    DB " 0-   Retirar "
+    DB 0
+
+AVISO:
+    DB " Ate tres itens"
+    DB 0
+
 TRANSACAO:
     DB " TRANSACAO "
     DB 0
@@ -658,19 +669,19 @@ PRODUTOS:
     DB "PRODUTOS ABAIXO"
     DB 0
 
-AVISO:
-DB " Compras de ate"
-DB 0
-AVISO_2:
-DB "3 itens"
-DB 0
 CHEIO:
-DB " Limite excedido"
-DB 0 
+    DB " Limite excedido"
+    DB 0 
 
 ESCREVER_SENHA:
-DB "Senha - "
-DB 0
+    DB "Senha - "
+    DB 0
+
+; | Usado para a senha abaixo
+CONFERE:
+    DB " " ; | O valor (senha) terá quatro digitos, sendo compostos pelo valor da conta em si, e caso o valor da conta não tenha 4 digitos, adicione um 0 ao começo dele.
+    DB 00h ; | Declara string, e lê até o fim
+
 ; ---------------------------------- Prints ---------------------------------------
 
 opcoes:
@@ -734,12 +745,12 @@ opcoes:
 	ACALL delay
 	MOV A, #00h
 	ACALL posicionaCursor
-	MOV DPTR, #AVISO
+	MOV DPTR, #ZERO
 	ACALL escreveString
 	ACALL delay
 	MOV A, #40h
 	ACALL posicionaCursor
-	MOV DPTR, #AVISO_2
+	MOV DPTR, #AVISO
 	ACALL escreveString
 	ACALL clearDisplay
 	ACALL delay
