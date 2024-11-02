@@ -501,11 +501,11 @@ SUKITA:
     DB 0
 
 REDBULL: 
-    DB "6- Redbull R$ 7 "
+    DB "5- Redbull R$ 7 "
     DB 0
 
 MONSTER:
-    DB "7- Monster R$ 8 "
+    DB "6- Monster R$ 8 "
     DB 0
 
 CANCELAR: 
