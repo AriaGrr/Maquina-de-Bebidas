@@ -105,8 +105,12 @@ checar_tecla1:
 	LJMP reset
 	checkout:
         CJNE A, 40h, checar_limite
-		MOV 25h, R6
+
 		ACALL somar_preco
+		MOV 25h, R6
+		MOV R6, #0
+		MOV R5, #20h
+		MOV R0, #0
 		LJMP pressionado_2
 	checar_limite:
         MOV 10h, #3
@@ -116,6 +120,7 @@ checar_tecla1:
         ACALL delay
         ACALL clearDisplay
         MOV A, #00h
+		ACALL delay
         ACALL posicionaCursor
         ACALL delay
         ACALL escreveString
@@ -142,13 +147,13 @@ checar_tecla1:
         INC R5
         RET
 	checar_monster:
-        CJNE A, 45h, checar_redbull
+        CJNE A, 46h, checar_redbull
         MOV @R0, #8
         INC R6
         INC R5
         RET
 	checar_redbull:
-        CJNE A, 46h, checar_sukita
+        CJNE A, 47h, checar_sukita
         MOV @R0, #7
         INC R6
         INC R5
@@ -182,11 +187,114 @@ dividir:
 	MOV 30h, #0	
 	MOV 31h, #0
     MOV 32h, A
+	;ACALL sendCharacter
     ;INC R0
     MOV 33h, B
 
     ret
+checar_tecla2:
+	MOV B, R5
+	MOV R0, B
+	MOV R4, A
+	checar_remover:
+        CJNE A, 42h, confirmar_pagamento
+		DEC R0
+	    MOV @R0, #0h
+        DEC R5
+		DEC R6
+        RET
 
+	confirmar_pagamento:
+        CJNE A, 40h, checar_limite2
+		;	ACALL checagem
+		RET
+	checar_limite2:
+        MOV 10h, #4
+        MOV A, R6
+        CJNE A, 10h , checar_1
+        MOV DPTR, #CHEIO
+        ACALL delay
+        ACALL clearDisplay
+        MOV A, #00h
+        ACALL posicionaCursor
+        ACALL delay
+        ACALL escreveString
+        RET
+
+
+	checar_1:
+        MOV A, R4
+        CJNE A, 4Bh, checar_2
+        MOV @R0, #1
+        INC R6
+        INC R5
+        RET
+	checar_2:
+        CJNE A, 4Ah, checar_3
+        MOV @R0, #2
+        INC R6
+        INC R5
+        RET
+	checar_3:
+        CJNE A, 49h, checar_4
+        MOV @R0, #3
+        INC R6
+        INC R5
+        RET
+	checar_4:
+        CJNE A, 48h, checar_5
+        MOV @R0, #4
+        INC R6
+        INC R5
+        RET
+	checar_5:
+        CJNE A, 47h, checar_6
+        MOV @R0, #5
+        INC R6
+        INC R5
+        RET
+	checar_6:
+        CJNE A, 46h, checar_7
+        MOV @R0, #6
+        INC R6
+        INC R5
+        RET
+	checar_7:
+	    CJNE A, 45h, checar_8
+        MOV @R0, #7
+        INC R6
+        INC R5
+        RET
+	checar_8:
+	    CJNE A, 44h, checar_9
+        MOV @R0, #8
+        INC R6
+        INC R5
+        RET
+	checar_9:
+	    CJNE A, 43h, checar_0
+        MOV @R0, #9
+        INC R6
+        INC R5
+        RET
+		checar_0:
+	CJNE A, 41h, fim2
+	MOV @R0, #0h
+	INC R6
+	INC R5
+	RET
+    fim2:
+    ret
+
+;checagem:
+;MOV R0, #20h
+;MOV R1, #30h
+;MOV R2, #0
+;MOV R3, #4
+;loop_checagem:
+;CJNE @R1, @R0, errado
+;DJNZ R3, loop_checagem
+;LCALL
 pressionado_1:
 	ACALL leituraTeclado
 	JNB F0, pressionado_1  ; | if F0 is clear, jump to pressionado_1
@@ -213,7 +321,7 @@ pressionado_1:
 ; | Quando enter é pressionado no pressionado_1 vem pro pressionado_2
 pressionado_2:
 	ACALL leituraTeclado
-	JNB F0, 2  ; | if F0 is clear, jump to 2
+	JNB F0, pressionado_2  ; | if F0 is clear, jump to 2
     MOV A, #40h ; | pega endereço 40h e guarda ele em A
 	ADD A, R0 ; | adiciona em A o que ta no R0 (valor que a pessoa clicou)
  	MOV R0, A 
@@ -225,7 +333,8 @@ pressionado_2:
     MOV @R1, A ; | coloca o resultado de a no endereco de r1 
     INC R1 ; | incrementa r1 para ir pro prox endereço de valor guardado
     MOV A, R7 
-
+	ACALL checar_tecla2
+	JMP pressionado_2
 enter:
     CLR A
  	ACALL leituraTeclado
@@ -529,14 +638,6 @@ PAGAR:
     DB "#-    Pagar    "
     DB 0
 
-ZERO:
-DB " 0-   Retirar "
-DB 0
-
-AVISO:
-DB " Ate tres itens"
-DB 0
-
 TRANSACAO:
     DB " TRANSACAO "
     DB 0
@@ -557,9 +658,19 @@ PRODUTOS:
     DB "PRODUTOS ABAIXO"
     DB 0
 
+AVISO:
+DB " Compras de ate"
+DB 0
+AVISO_2:
+DB "3 itens"
+DB 0
 CHEIO:
-DB "Limite excedido"
+DB " Limite excedido"
 DB 0 
+
+ESCREVER_SENHA:
+DB "Senha - "
+DB 0
 ; ---------------------------------- Prints ---------------------------------------
 
 opcoes:
@@ -623,12 +734,12 @@ opcoes:
 	ACALL delay
 	MOV A, #00h
 	ACALL posicionaCursor
-	MOV DPTR, #ZERO
+	MOV DPTR, #AVISO
 	ACALL escreveString
 	ACALL delay
 	MOV A, #40h
 	ACALL posicionaCursor
-	MOV DPTR, #AVISO
+	MOV DPTR, #AVISO_2
 	ACALL escreveString
 	ACALL clearDisplay
 	ACALL delay
