@@ -97,20 +97,23 @@ checar_tecla1:
         CJNE A, 41h, checar_reset
 	DEC R0
 	    MOV @R0, #0h
+		ACALL amarelo
         DEC R5
 		DEC R6
         RET
 	checar_reset:
 	CJNE A, 42h, checkout
+	ACALL amarelo
 	LJMP reset
 	checkout:
         CJNE A, 40h, checar_limite
-
+		ACALL amarelo
 		ACALL somar_preco
 		MOV 70h, R6
 		MOV R6, #0
 		MOV R5, #20h
 		MOV R0, #0
+		ACALL valor_total
 		ACALL delay_mini
 		ACALL pressionado_2
 	checar_limite:
@@ -125,6 +128,8 @@ checar_tecla1:
         ACALL posicionaCursor
         ACALL delay
         ACALL escreveString
+		ACALL clearDisplay
+		ACALL delay
         RET
 
 	
@@ -210,6 +215,7 @@ checar_tecla2:
 	MOV R4, A
 	checar_remover:
         CJNE A, 42h, confirmar_pagamento
+		ACALL amarelo
 		DEC R0
 	    MOV @R0, #0h
         DEC R5
@@ -218,6 +224,7 @@ checar_tecla2:
 
 	confirmar_pagamento:
         CJNE A, 40h, checar_limite2
+		ACALL amarelo
 		ACALL checagem
 		RET
 	checar_limite2:
@@ -231,6 +238,8 @@ checar_tecla2:
         ACALL posicionaCursor
         ACALL delay
         ACALL escreveString
+		ACALL clearDisplay	
+		ACALL delay
         RET
 
 
@@ -630,8 +639,11 @@ retornaCursor :
 
 ; | Espera por um sinal de rotação completa no pino P3.2
 rotacao:
+	MOV TMOD, #01010000b
+	SETB TR1
     JNB P3.2, rotacao ; | Espera até que sensor no pino P3.2 indique a rotação completa
 	CLR P3.1  ; | Parar o motor
+	
 	RET
        
 ; ----------------------------------- Bebidas e + ----------------------------------
@@ -707,6 +719,10 @@ DB 0
 
 NUMERO_INVALIDO:
 DB "Numero invalido"
+DB 0
+
+VALOR:
+DB "Total R$"
 DB 0
 ; ---------------------------------- Prints ---------------------------------------
 
@@ -831,7 +847,10 @@ retirada:
     MOV A, #00h
     ACALL posicionaCursor
     MOV DPTR,#RETIRE ; | DPTR = Inicio da palavra
-	MOV R0, 70h
+	MOV A, 70h
+	MOV B, #10
+	MUL AB
+	MOV R0, A
 	ACALL loop_motor
 	ACALL delay 
     ACALL escreveString
@@ -841,8 +860,20 @@ retirada:
     ACALL escreveString
     ACALL delay
     ACALL clearDisplay
-
-
+	ACALL reset
+	SJMP $
+valor_total:
+MOV A, #00h
+ACALL posicionaCursor
+MOV DPTR, #VALOR
+ACALL escreveString
+MOV A, 32h
+ADD A, #30h
+ACALL sendCharacter
+MOV A, 33h
+ADD A, #30h
+ACALL sendCharacter
+RET
 ; | Fazer o display atualizar com valor e o número de produtos do pedido, conforme a pessoa aperta o teclado em sua primeira fase.
 
 ; ---------------------------------- Leds ------------------------------------
@@ -896,6 +927,8 @@ amarelo:
 loop_motor:
 ACALL rotacao
 DJNZ R0, loop_motor
+SETB P3.0
+SETB P3.1
 RET
 ; ---------------------------------- Delays ------------------------------------
 
@@ -914,7 +947,7 @@ delay:
 delays:
     ;ACALL delay
     ;ACALL delay
-    ACALL delay
+    ;ACALL delay
     ACALL delay
     ACALL delay ; | Chamar a subrotina de delay
     RET 
