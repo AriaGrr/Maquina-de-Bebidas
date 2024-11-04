@@ -1,4 +1,5 @@
 
+
 ; -------------------------------- Repositorio ---------------------------------
 
 ; |
@@ -30,7 +31,17 @@ org 0030h
 reset: 
 ; | Limpar os registradores (se tiver mais coisas que são usadas e precisa limpar taca aqui)
     clr A
+
     
+; | Desabilitar todas as interrupções
+    ;EA EQU 0
+	MOV R0, #0
+	MOV R1, #0
+	MOV R2, #0
+	MOV R3, #0
+	MOV R4, #0
+	MOV R5, #20h
+	MOV R7, #0
     MOV 40H, #'#' 
     MOV 41H, #'0'
     MOV 42H, #'*'
@@ -43,9 +54,9 @@ reset:
     MOV 49H, #'3'
     MOV 4AH, #'2'
     MOV 4BH, #'1'
-
+	MOV 70H, #0
     MOV R6, #00
-    MOV R5, #30h
+    ;MOV R5, #30h
     MOV 30H, #0
     MOV 31H, #0
     MOV 32H, #0
@@ -56,7 +67,12 @@ reset:
     MOV 37H, #0
     MOV 38H, #0
     MOV 39H, #0
-
+	MOV 20H, #0
+	MOV 21H, #0
+	MOV 22H, #0
+	MOV 23H, #0
+	MOV 24H, #0
+	MOV 25H, #0
 ; | Saltar para o início do programa principal
     LJMP main
 
@@ -73,49 +89,277 @@ reset:
 
 ; | ARRUMAR ESTA PARTE DO CÓDIGO PARA NOSSAS NECESSIDADES
 
-checar_preco:
+checar_tecla1:
 	MOV B, R5
-	MOV R1, B
+	MOV R0, B
+	MOV R4, A
+	checar_remocao:
+        CJNE A, 41h, checar_reset
+	DEC R0
+	    MOV @R0, #0h
+		ACALL amarelo
+        DEC R5
+		DEC R6
+        RET
+	checar_reset:
+	CJNE A, 42h, checkout
+	ACALL amarelo
+	LJMP reset
+	checkout:
+        CJNE A, 40h, checar_limite
+		ACALL amarelo
+		ACALL somar_preco
+		MOV 70h, R6
+		MOV R6, #0
+		MOV R5, #20h
+		MOV R0, #0
+		ACALL valor_total
+		ACALL mostrar_senha
+		ACALL delay_mini
+		ACALL pressionado_2
+	checar_limite:
+        MOV 10h, #3
+        MOV A, R6
+        CJNE A, 10h , checar_coca
+        MOV DPTR, #CHEIO
+        ACALL delay
+        ACALL clearDisplay
+        MOV A, #00h
+		ACALL delay
+        ACALL posicionaCursor
+        ACALL delay
+        ACALL escreveString
+		ACALL clearDisplay
+		ACALL delay
+        RET
 
-	checar_coca:
-	CJNE A, 4Bh, checar_pepsi
-	MOV @R1, #5
-	INC R6
-	INC R5
-
-	checar_pepsi:
-	CJNE A, 4Ah, checar_sprite
-	MOV @R1, #6
-	INC R6
-	INC R5
-
-	checar_sprite:
-	CJNE A, 49h, checar_monster
-	MOV @R1, #4
-	INC R6
-	INC R5
-
-	checar_monster:
-	CJNE A, 45h, checar_redbull
-	MOV @R1, #8
-	INC R6
-	INC R5
-
-	checar_redbull:
-	CJNE A, 46h, checar_sukita
-	MOV @R1, #7
-	INC R6
-	INC R5
-
-	checar_sukita:
-	CJNE A, 48h, fim
-	MOV @R1, #3
-	INC R6
-	INC R5
 	
-fim:
-ret
+	checar_coca:
+        MOV A, R4
+        CJNE A, 4Bh, checar_pepsi
+        MOV @R0, #5
+        INC R6
+        INC R5
+        RET
+	checar_pepsi:
+        CJNE A, 4Ah, checar_sprite
+        MOV @R0, #6
+        INC R6
+        INC R5
+        RET
+	checar_sprite:
+        CJNE A, 49h, checar_monster
+        MOV @R0, #4
+        INC R6
+        INC R5
+        RET
+	checar_monster:
+        CJNE A, 46h, checar_redbull
+        MOV @R0, #8
+        INC R6
+        INC R5
+        RET
+	checar_redbull:
+        CJNE A, 47h, checar_sukita
+        MOV @R0, #7
+        INC R6
+        INC R5
+        RET
+	checar_sukita:
+        CJNE A, 48h, checar_sete
+        MOV @R0, #3
+        INC R6
+        INC R5
+        RET
+	checar_sete:
+	CJNE A, 45h, checar_oito
+	ACALL invalido
+	RET
+	checar_oito:
+	CJNE A, 44h, checar_nove
+	ACALL invalido
+	RET
+	checar_nove:
+	CJNE A, 43h, fim
+	ACALL invalido
+	RET
+		
+    fim:
+    ret
 
+somar_preco:
+	
+    MOV B, R6
+    MOV R0, B
+    MOV R1, #20h
+    MOV A, #0
+    loop_soma:
+    ADD A, @R1
+    INC R1
+    MOV R3, A
+    DJNZ R0, loop_soma
+
+dividir:
+    MOV B, #10
+    DIV AB
+	MOV 30h, #0	
+	MOV 31h, #0
+    MOV 32h, A
+	;ACALL sendCharacter
+    ;INC R0
+    MOV 33h, B
+
+    ret
+checar_tecla2:
+	MOV B, R5
+	MOV R0, B
+	MOV R4, A
+	checar_remover:
+        CJNE A, 42h, confirmar_pagamento
+		ACALL amarelo
+		DEC R0
+	    MOV @R0, #0h
+		ACALL apagar_numero
+		MOV A, R4
+        DEC R5
+		DEC R6
+        RET
+
+	confirmar_pagamento:
+        CJNE A, 40h, checar_limite2
+		ACALL amarelo
+		ACALL checagem
+		RET
+	checar_limite2:
+        MOV 10h, #4
+        MOV A, R6
+        CJNE A, 10h , checar_1
+        MOV DPTR, #CHEIO
+        ACALL delay
+        ACALL clearDisplay
+        MOV A, #00h
+        ACALL posicionaCursor
+        ACALL delay
+        ACALL escreveString
+		ACALL clearDisplay	
+		ACALL delay
+        RET
+
+
+	checar_1:
+        MOV A, R4
+        CJNE A, 4Bh, checar_2
+        MOV @R0, #1
+		MOV A, #120
+		ACALL sendCharacter
+		MOV A, R4
+        INC R6
+        INC R5
+        RET
+	checar_2:
+        CJNE A, 4Ah, checar_3
+        MOV @R0, #2
+		MOV A, #120
+		ACALL sendCharacter
+		MOV A, R4
+        INC R6
+        INC R5
+        RET
+	checar_3:
+        CJNE A, 49h, checar_4
+        MOV @R0, #3
+		MOV A, #120
+		ACALL sendCharacter
+		MOV A, R4
+        INC R6
+        INC R5
+        RET
+	checar_4:
+        CJNE A, 48h, checar_5
+        MOV @R0, #4
+		MOV A, #120
+		ACALL sendCharacter
+		MOV A, R4
+        INC R6
+        INC R5
+        RET
+	checar_5:
+        CJNE A, 47h, checar_6
+        MOV @R0, #5
+		MOV A, #120
+		ACALL sendCharacter
+		MOV A, R4
+        INC R6
+        INC R5
+        RET
+	checar_6:
+        CJNE A, 46h, checar_7
+        MOV @R0, #6
+		MOV A, #120
+		ACALL sendCharacter
+		MOV A, R4
+        INC R6
+        INC R5
+        RET
+	checar_7:
+	    CJNE A, 45h, checar_8
+        MOV @R0, #7
+		MOV A, #120
+		ACALL sendCharacter
+		MOV A, R4
+        INC R6
+        INC R5
+        RET
+	checar_8:
+	    CJNE A, 44h, checar_9
+        MOV @R0, #8
+		MOV A, #120
+		ACALL sendCharacter
+		MOV A, R4
+        INC R6
+        INC R5
+        RET
+	checar_9:
+	    CJNE A, 43h, checar_0
+        MOV @R0, #9
+		MOV A, #120
+		ACALL sendCharacter
+		MOV A, R4
+        INC R6
+        INC R5
+        RET
+		checar_0:
+	CJNE A, 41h, fim2
+	MOV @R0, #0h
+		MOV A, #120
+		ACALL sendCharacter
+		MOV A, R4
+	INC R6
+	INC R5
+	RET
+    fim2:
+    ret
+
+checagem:
+MOV R0, #20h
+MOV R1, #30h
+MOV R2, #0
+MOV R3, #4
+loop_checagem:
+MOV A, @R1	
+CJNE A, 20h, errado
+INC R1
+MOV A, @R1	
+CJNE A, 21h, errado
+INC R1
+MOV A, @R1	
+CJNE A, 22h, errado
+INC R1
+MOV A, @R1	
+CJNE A, 23h, errado
+INC R1
+ACALL passou
+RET
 pressionado_1:
 	ACALL leituraTeclado
 	JNB F0, pressionado_1  ; | if F0 is clear, jump to pressionado_1
@@ -129,10 +373,11 @@ pressionado_1:
     SUBB A, R2 ; | subtrai valor de a com 30 que ai da o valor pressionado_1 (para restar somente o valor de fato pessoa clica em 1 fica guardado 31)
     MOV @R1, A ; | coloca o resultado de a no endereco de r1 
     INC R1 ; | incrementa r1 para ir pro prox endereço de valor guardado
-    MOV A, R7      
+    MOV A, R7   
+	 
     
-	ACALL checar_preco  
- 	ACALL sendCharacter 
+	ACALL checar_tecla1
+ 	;ACALL sendCharacter 
  	CLR F0 ; | limpa f0 para nao dar problemas 
  	DJNZ R3, pressionado_1 ; | DECREMENTA R3 E VOLTA
 	; | Parte para imitar um enter;(#23H = #)(pessoa apos escrever a senha tem que clicar no # para verificar se ta certa ou nao)
@@ -142,58 +387,35 @@ pressionado_1:
 ; | Quando enter é pressionado no pressionado_1 vem pro pressionado_2
 pressionado_2:
 	ACALL leituraTeclado
-	JNB F0, 2  ; | if F0 is clear, jump to 2
+	JNB F0, pressionado_2  ; | if F0 is clear, jump to pressionado_1
     MOV A, #40h ; | pega endereço 40h e guarda ele em A
 	ADD A, R0 ; | adiciona em A o que ta no R0 (valor que a pessoa clicou)
  	MOV R0, A 
 	MOV A, @R0  ; | passa para A o conteudo do que está no endereço de R0
                   
-    MOV R7, A ; | adiciona valor relacionado ao botao do teclado 2, que esta em a, no R7
+    MOV R7, A ; | adiciona valor relacionado ao botao do teclado pressionado_1, que esta em a, no R7
     MOV R2, #30H ; | coloca valor 30 no r2 
-    SUBB A, R2 ; | subtrai valor de a com 30 que ai da o valor 2 (para restar somente o valor de fato pessoa clica em 1 fica guardado 31)
+    SUBB A, R2 ; | subtrai valor de a com 30 que ai da o valor pressionado_1 (para restar somente o valor de fato pessoa clica em 1 fica guardado 31)
     MOV @R1, A ; | coloca o resultado de a no endereco de r1 
     INC R1 ; | incrementa r1 para ir pro prox endereço de valor guardado
-    MOV A, R7 
+    MOV A, R7   
+	 
+    
+	ACALL checar_tecla2
+ 	;ACALL sendCharacter 
+ 	CLR F0 ; | limpa f0 para nao dar problemas 
+ 	DJNZ R3, pressionado_2 ; | DECREMENTA R3 E VOLTA
+	; | Parte para imitar um enter;(#23H = #)(pessoa apos escrever a senha tem que clicar no # para verificar se ta certa ou nao)
+	MOV R3, #23H
+; | itera pela label ate o valor de A ser igual ao de 03h
+	JMP pressionado_2
+	
 
-enter:
-    CLR A
- 	ACALL leituraTeclado
-    JNB F0, enter 
-    MOV A, #40h
-	ADD A, R0
-	MOV R0, A
- 	MOV A, @R0  
-	CLR F0 ; | coloca clr f0 para dar certo
-    CJNE A, 03H, enter
-; | Parte onde comparamos a senha salva com os digitados pelo usuario 
-    MOV R3, #4 ; | loop 4x
-    MOV R0, #30H ; | valor 30 para ir ao endereço 30 e comparar (ta senha padrao)
-    MOV R1, #60H ; | senha que usuario digitou
-
-senha:
-    MOV A, #06h ; | centralizado
- 	ACALL posicionaCursor ; | escrever senha digitada na memoria
-    ; | itera pela posicao de memoria do 40h para ver que valor o usuario digitou e salva-los nas posicao a partir da 60h
-    MOV R1, #60H
-	MOV R3, #4 ;4 repeticoes pq senha tem 4 digitos
-
-; | Pra comparar a "senha" (valor da compra, com zeros a esquerda até ter 4 digitos)
-compara:
-    MOV A, @R0 ; | lê o valor do endereço de R0 para A.
-    MOV 70H,@R1
-    CJNE A, 70H, errado; | DIFERENTE PULA
-    INC R0 ; | incrementa r0 para comparar o proximo valor da senha
-    INC R1  ; | incrementa r1 para comparar o prox valor da senha com valor digitado pelo user
-    DJNZ R3, compara ; | LOOP 4X 
-; | "Menu"
-; | Deve girar n*2 vezes conforme a quantidade de produtos
- 	SETB P3.1 ; |  Gira motor no sentido horário se a pessoaa acerta a senha
- 	CLR P3.0
 
 ; | Completar
 errado:
     LCALL negou
-
+	RET
 ; ------------------------------ Leitura do teclado --------------------------------
      
 leituraTeclado:
@@ -415,8 +637,12 @@ retornaCursor :
 
 ; | Espera por um sinal de rotação completa no pino P3.2
 rotacao:
+	MOV TMOD, #01010000b
+	SETB TR1
     JNB P3.2, rotacao ; | Espera até que sensor no pino P3.2 indique a rotação completa
 	CLR P3.1  ; | Parar o motor
+	
+	RET
        
 ; ----------------------------------- Bebidas e + ----------------------------------
 
@@ -441,11 +667,11 @@ SUKITA:
     DB 0
 
 REDBULL: 
-    DB "6- Redbull R$ 7 "
+    DB "5- Redbull R$ 7 "
     DB 0
 
 MONSTER:
-    DB "7- Monster R$ 8 "
+    DB "6- Monster R$ 8 "
     DB 0
 
 CANCELAR: 
@@ -454,6 +680,9 @@ CANCELAR:
 
 PAGAR:
     DB "#-    Pagar    "
+    DB 0
+ZERO:
+    DB " 0-   Retirar "
     DB 0
 
 TRANSACAO:
@@ -476,6 +705,26 @@ PRODUTOS:
     DB "PRODUTOS ABAIXO"
     DB 0
 
+AVISO:
+DB " Compras de ate"
+DB 0
+AVISO_2:
+DB "3 itens"
+DB 0
+CHEIO:
+DB " Limite excedido"
+DB 0 
+
+NUMERO_INVALIDO:
+DB "Numero invalido"
+DB 0
+
+VALOR:
+DB "Total R$"
+DB 0
+SENHA:
+DB "Senha - "
+DB 0
 ; ---------------------------------- Prints ---------------------------------------
 
 opcoes:
@@ -520,6 +769,8 @@ opcoes:
     MOV DPTR, #MONSTER
     ACALL escreveString
     ACALL clearDisplay 
+		ACALL delay
+
 ; | Fim
 
     ACALL delay
@@ -534,10 +785,38 @@ opcoes:
     MOV DPTR, #CANCELAR
     ACALL escreveString
     ACALL clearDisplay 
+	ACALL delay
+	MOV A, #00h
+	ACALL posicionaCursor
+	MOV DPTR, #ZERO
+	ACALL escreveString
+	ACALL delay
+	ACALL clearDisplay
+	ACALL delay
+	MOV A, #00h
+	ACALL posicionaCursor
+	MOV DPTR, #AVISO
+	ACALL escreveString
+	ACALL delay
+	MOV A, #40h
+	ACALL posicionaCursor
+	MOV DPTR, #AVISO_2
+	ACALL escreveString
+	ACALL clearDisplay
+	ACALL delay
 	RET
 ; | Nega a transação caso o valor inserido esteja incorreto e reseta tudo.
-
+invalido:
+    MOV A, #00h
+    ACALL posicionaCursor
+    MOV DPTR,#NUMERO_INVALIDO ; | DPTR = Inicio da palavra 
+	ACALL delay
+    ACALL escreveString
+	ACALL delay
+	ACALL clearDisplay
+	RET
 negou:
+	ACALL vermelho
     MOV A, #00h
     ACALL posicionaCursor
     MOV DPTR,#TRANSACAO ; | DPTR = Inicio da palavra 
@@ -548,13 +827,17 @@ negou:
     ACALL escreveString
     ACALL delay
     ACALL clearDisplay
-
+	RET
 ; | Se passar o motor deve girar conforme a quantidade de produtos vezes dois e após isso mostrar a mensagem para retirada.
 
 passou:
+	ACALL verde
+	ACALL clearDisplay
+	ACALL delay
     MOV A, #00h
     ACALL posicionaCursor
     MOV DPTR,#TRANSACAO ; | DPTR = Inicio da palavra 
+	ACALL delay
     ACALL escreveString
     MOV A, #40h
     ACALL posicionaCursor
@@ -564,9 +847,16 @@ passou:
     ACALL clearDisplay
 
 retirada:
+	
     MOV A, #00h
     ACALL posicionaCursor
-    MOV DPTR,#RETIRE ; | DPTR = Inicio da palavra 
+    MOV DPTR,#RETIRE ; | DPTR = Inicio da palavra
+	MOV A, 70h
+	MOV B, #10
+	MUL AB
+	MOV R0, A
+	ACALL loop_motor
+	ACALL delay 
     ACALL escreveString
     MOV A, #40h
     ACALL posicionaCursor
@@ -574,8 +864,43 @@ retirada:
     ACALL escreveString
     ACALL delay
     ACALL clearDisplay
+	ACALL reset
+	SJMP $
+valor_total:
+MOV A, #00h
+ACALL posicionaCursor
+MOV DPTR, #VALOR
+ACALL escreveString
+MOV A, 32h
+ADD A, #30h
+ACALL sendCharacter
+MOV A, 33h
+ADD A, #30h
+ACALL sendCharacter
+RET
 
+mostrar_senha:
 
+ACALL clearDisplay
+ACALL delay
+MOV A, #00h
+
+ACALL posicionaCursor
+ACALL delay
+MOV DPTR, #SENHA
+ACALL escreveString
+RET
+
+apagar_numero:
+MOV A, #8
+ADD A, R6
+ACALL posicionaCursor
+MOV A, #' '
+ACALL sendCharacter
+MOV A, #8
+ADD A, R6
+ACALL posicionaCursor
+RET
 ; | Fazer o display atualizar com valor e o número de produtos do pedido, conforme a pessoa aperta o teclado em sua primeira fase.
 
 ; ---------------------------------- Leds ------------------------------------
@@ -626,6 +951,12 @@ amarelo:
     CALL apagar
     RET
 
+loop_motor:
+ACALL rotacao
+DJNZ R0, loop_motor
+SETB P3.0
+SETB P3.1
+RET
 ; ---------------------------------- Delays ------------------------------------
 
 ; | Delay normal
@@ -643,11 +974,14 @@ delay:
 delays:
     ;ACALL delay
     ;ACALL delay
-    ACALL delay
+    ;ACALL delay
     ACALL delay
     ACALL delay ; | Chamar a subrotina de delay
     RET 
-
+delay_mini:
+   MOV R1, #50
+   DJNZ R1, $
+   RET
 ; ----------------------------- End of subroutines -----------------------------
 
 ; ---------------------------------- Main --------------------------------------
