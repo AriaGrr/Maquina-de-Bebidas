@@ -689,19 +689,19 @@ ZERO:
     DB 0
 
 TRANSACAO:
-    DB " TRANSACAO "
+    DB "   TRANSACAO "
     DB 0
 
 APROVADA:
-    DB " APROVADA "
+    DB "    APROVADA "
     DB 0
 
 NEGADA:
-    DB " NEGADA "
+    DB "     NEGADA "
     DB 0
 
 RETIRE:
-    DB " RETIRE OS "
+    DB "   RETIRE OS "
     DB 0
 
 PRODUTOS:
@@ -709,11 +709,11 @@ PRODUTOS:
     DB 0
 
 AVISO:
-    DB " Compras de ate"
+    DB "  Compras de ate"
     DB 0
 
 AVISO_2:
-    DB "3 itens"
+    DB "    3 itens"
     DB 0
 
 CHEIO:
@@ -916,13 +916,13 @@ apagar_numero:
 acender:
     MOV A, R0 ; | Assumindo que o número do pino está em R0
     MOV P2, A
-    ACALL delays
-    ;ACALL delay
+    ;ACALL delays
+    ACALL delay
     RET
 
 ; | Apaga todos os leds
 apagar:
-    ACALL delay
+    ;ACALL delay
     MOV P2, #0FFH 
     RET
 
@@ -979,10 +979,12 @@ delays:
     ACALL delay
     ACALL delay ; | Chamar a subrotina de delay
     RET 
+
 delay_mini:
    MOV R1, #50
    DJNZ R1, $
    RET
+   
 ; ----------------------------- End of subroutines -----------------------------
 
 ; ---------------------------------- Main --------------------------------------
