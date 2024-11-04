@@ -394,15 +394,15 @@ pressionado_1:
 ; | Quando enter é pressionado no pressionado_1 vem pro pressionado_2
 pressionado_2:
 	ACALL leituraTeclado
-	JNB F0, pressionado_2  ; | if F0 is clear, jump to pressionado_1
+	JNB F0, pressionado_2  ; | if F0 is clear, jump to pressionado_2
     MOV A, #40h ; | pega endereço 40h e guarda ele em A
 	ADD A, R0 ; | adiciona em A o que ta no R0 (valor que a pessoa clicou)
  	MOV R0, A 
 	MOV A, @R0  ; | passa para A o conteudo do que está no endereço de R0
                   
-    MOV R7, A ; | adiciona valor relacionado ao botao do teclado pressionado_1, que esta em a, no R7
+    MOV R7, A ; | adiciona valor relacionado ao botao do teclado pressionado_2, que esta em a, no R7
     MOV R2, #30H ; | coloca valor 30 no r2 
-    SUBB A, R2 ; | subtrai valor de a com 30 que ai da o valor pressionado_1 (para restar somente o valor de fato pessoa clica em 1 fica guardado 31)
+    SUBB A, R2 ; | subtrai valor de a com 30 que ai da o valor pressionado_2 (para restar somente o valor de fato pessoa clica em 1 fica guardado 31)
     MOV @R1, A ; | coloca o resultado de a no endereco de r1 
     INC R1 ; | incrementa r1 para ir pro prox endereço de valor guardado
     MOV A, R7   
