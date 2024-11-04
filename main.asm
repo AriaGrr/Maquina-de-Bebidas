@@ -27,7 +27,7 @@ org 0030h
 ; | MAPEAMENTO DAS TECLAS (salva os valores das teclas na memoria a partir do endereço 40h)
 
 reset: 
-; | Limpar os registradores (se tiver mais coisas que são usadas e precisa limpar taca aqui)
+; | Limpar os registradores e + (se tiver mais coisas que são usadas e precisa limpar taca aqui)
     clr A
 
 	MOV R0, #0
@@ -79,6 +79,7 @@ checar_tecla1:
 	MOV B, R5 ; | Coloca endereço em B
 	MOV R0, B ; | Colocar endereço em R0 para escrever
 	MOV R4, A ; | Coloca número digitado em A
+
 	checar_remocao:
         CJNE A, 41h, checar_reset ; | Se não for igual, ir para próxima função
   	DEC R0 ; | Igualar R0 ao número a ser apagado
@@ -122,7 +123,6 @@ checar_tecla1:
 		ACALL delay
         RET
 
-	
 	checar_coca:
         MOV A, R4 ; | Coloca o número lido no teclado de volta no A para comparação
         CJNE A, 4Bh, checar_pepsi ; | Compara com o número 1, caso contrário, compara com número 2
@@ -130,48 +130,56 @@ checar_tecla1:
         INC R6 ; | Incrementa o contador
         INC R5 ; | Ir para o próximo endereço
         RET
+
 	checar_pepsi:
         CJNE A, 4Ah, checar_sprite  ; | Compara número 2, caso não seja, olhar número 3
         MOV @R0, #6 ; | Coloca o preço de uma pepsi na memória.
         INC R6 ; | Incrementa o contador
         INC R5 ; | Ir para o próximo endereço
         RET
+
 	checar_sprite:
         CJNE A, 49h, checar_monster ; | Compara com número 3, caso contrário, compara com número 5
         MOV @R0, #4 ; | Coloca preço de uma sprite na memória
         INC R6 ; | Incrementa contador
         INC R5 ; | Incrementa para o próximo endereço
         RET
+
 	checar_monster:
         CJNE A, 46h, checar_redbull ;checa número 6, caso contrário, olhar número 5
         MOV @R0, #8 ; | Inserir preço de um monster na memória
         INC R6 ; | Incrementa o contador
         INC R5 ; | Vai para o próximo endereço
         RET
+
 	checar_redbull:
         CJNE A, 47h, checar_sukita ; | Checar número 5, caso contrário, olhar número 4
         MOV @R0, #7 ; | Inserir preço de uma redbull na memória
         INC R6 ; | Incrementa o contador
         INC R5 ; | Vai para o próximo endereço
         RET
+
 	checar_sukita:
         CJNE A, 48h, checar_sete ; | Checar 4, caso contrário, checar 7
         MOV @R0, #3 ; | Coloca preço de uma sukita na memória
         INC R6 ; | Incrementa o contador
         INC R5 ; | Vai para o próximo endereço
         RET
+
 	checar_sete:
-	CJNE A, 45h, checar_oito ; | Se não for 7, comparar com 8
-	ACALL invalido ; | Imprimir aviso na LCD
-	RET
+        CJNE A, 45h, checar_oito ; | Se não for 7, comparar com 8
+        ACALL invalido ; | Imprimir aviso na LCD
+        RET
+
 	checar_oito:
-	CJNE A, 44h, checar_nove ; | Se não for 8, comparar com 9
-	ACALL invalido ; | Imprimir aviso na LCD
-	RET
+        CJNE A, 44h, checar_nove ; | Se não for 8, comparar com 9
+        ACALL invalido ; | Imprimir aviso na LCD
+        RET
+
 	checar_nove:
-	CJNE A, 43h, fim ; | Se não for 9, terminar operação
-	ACALL invalido ; | Imprimir aviso na LCD
-	RET
+        CJNE A, 43h, fim ; | Se não for 9, terminar operação
+        ACALL invalido ; | Imprimir aviso na LCD
+        RET
 		
 fim:
     ret
@@ -325,7 +333,8 @@ checar_tecla2:
         INC R6
         INC R5
         RET
-		checar_0: ; | Compara o número digitado com 0, coloca na memória e um X na lcd
+	
+    checar_0: ; | Compara o número digitado com 0, coloca na memória e um X na lcd
         CJNE A, 41h, fim2
         MOV @R0, #0h
 		MOV A, #120
@@ -926,7 +935,6 @@ apagar_numero: ; | Apaga um número da LCD
 acender:
     MOV A, R0 ; | Assumindo que o número do pino está em R0
     MOV P2, A
-    ;ACALL delays
     ACALL delay
     RET
 
@@ -981,14 +989,6 @@ delay:
     DJNZ R3, $
     DJNZ R4, $
     RET
-
-delays:
-    ;ACALL delay
-    ;ACALL delay
-    ;ACALL delay
-    ACALL delay
-    ACALL delay ; | Chamar a subrotina de delay
-    RET 
 
 delay_mini:
    MOV R1, #50
