@@ -174,7 +174,7 @@ checar_tecla1:
         CJNE A, 44h, checar_nove
         ACALL invalido
         RET
-        
+
 	checar_nove:
         CJNE A, 43h, fim
         ACALL invalido
@@ -387,7 +387,7 @@ pressionado_1:
  	;ACALL sendCharacter 
  	CLR F0 ; | limpa f0 para nao dar problemas 
  	DJNZ R3, pressionado_1 ; | DECREMENTA R3 E VOLTA
-	; | Parte para imitar um enter;(#23H = #)(pessoa apos escrever a senha tem que clicar no # para verificar se ta certa ou nao)
+	; | Parte para imitar um enter;(#23H = #)
 	MOV R3, #23H
 ; | itera pela label ate o valor de A ser igual ao de 03h
 
