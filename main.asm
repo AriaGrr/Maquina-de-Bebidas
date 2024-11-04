@@ -121,7 +121,6 @@ checar_tecla1:
 		ACALL clearDisplay
 		ACALL delay
         RET
-
 	
 	checar_coca:
         MOV A, R4
@@ -130,48 +129,56 @@ checar_tecla1:
         INC R6
         INC R5
         RET
+
 	checar_pepsi:
         CJNE A, 4Ah, checar_sprite
         MOV @R0, #6
         INC R6
         INC R5
         RET
+
 	checar_sprite:
         CJNE A, 49h, checar_monster
         MOV @R0, #4
         INC R6
         INC R5
         RET
+
 	checar_monster:
         CJNE A, 46h, checar_redbull
         MOV @R0, #8
         INC R6
         INC R5
         RET
+
 	checar_redbull:
         CJNE A, 47h, checar_sukita
         MOV @R0, #7
         INC R6
         INC R5
         RET
+
 	checar_sukita:
         CJNE A, 48h, checar_sete
         MOV @R0, #3
         INC R6
         INC R5
         RET
+
 	checar_sete:
-	CJNE A, 45h, checar_oito
-	ACALL invalido
-	RET
+        CJNE A, 45h, checar_oito
+        ACALL invalido
+        RET
+
 	checar_oito:
-	CJNE A, 44h, checar_nove
-	ACALL invalido
-	RET
+        CJNE A, 44h, checar_nove
+        ACALL invalido
+        RET
+        
 	checar_nove:
-	CJNE A, 43h, fim
-	ACALL invalido
-	RET
+        CJNE A, 43h, fim
+        ACALL invalido
+        RET
 		
 fim:
     ret
@@ -325,7 +332,8 @@ checar_tecla2:
         INC R6
         INC R5
         RET
-		checar_0:
+
+	checar_0:
         CJNE A, 41h, fim2
         MOV @R0, #0h
 		MOV A, #120
@@ -984,7 +992,7 @@ delay_mini:
    MOV R1, #50
    DJNZ R1, $
    RET
-   
+
 ; ----------------------------- End of subroutines -----------------------------
 
 ; ---------------------------------- Main --------------------------------------
