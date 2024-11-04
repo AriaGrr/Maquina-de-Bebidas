@@ -76,44 +76,44 @@ reset:
 ; --------------------------------- Comparadores ---------------------------------
 
 checar_tecla1:
-	MOV B, R5 ;coloca endereço em B
-	MOV R0, B ;colocar endereço em R0 para escrever
-	MOV R4, A ;coloca número digitado em A
+	MOV B, R5 ; | Coloca endereço em B
+	MOV R0, B ; | Colocar endereço em R0 para escrever
+	MOV R4, A ; | Coloca número digitado em A
 	checar_remocao:
-        CJNE A, 41h, checar_reset ;se não for igual, ir para próxima função
-  	DEC R0 ;igualar R0 ao número a ser apagado
-	    MOV @R0, #0h ;tira o número 
-		ACALL amarelo ;LEDS acendem
-        DEC R5 ;registra mudança de endereço
-		DEC R6 ; diminui o contador
+        CJNE A, 41h, checar_reset ; | Se não for igual, ir para próxima função
+  	DEC R0 ; | Igualar R0 ao número a ser apagado
+	    MOV @R0, #0h ; | Tira o número 
+		ACALL amarelo ; | LEDS amarelos acendem
+        DEC R5 ; | Registra mudança de endereço
+		DEC R6 ; | Diminui o contador
         RET
 
 	checar_reset:
-        CJNE A, 42h, checkout ;se não for igual, ir para próxima função
-        ACALL amarelo ; acende LEDS
-        LJMP reset ;reseta a máquina
+        CJNE A, 42h, checkout ; | Se não for igual, ir para próxima função
+        ACALL amarelo ; | LEDS amarelos acendem
+        LJMP reset ; | Reseta a máquina
 
 	checkout:
-        CJNE A, 40h, checar_limite ;se não for igual, ir para próxima função
-		ACALL amarelo ;LEDS se acendem
-		ACALL somar_preco ;faz soma do preço total e guarda na fileira de 30
-		MOV 70h, R6 ;coloca os itens registrados pelo contador em 70h
-		MOV R6, #0 ;reseta o contador para o pagamento
-		MOV R5, #20h ;reseta o endereço para escrever senha
-		MOV R0, #0 ;reseta R0
-		ACALL valor_total ;imprime o valor da compr no LCD
-		ACALL mostrar_senha ;mostra espaço para a senha
-		ACALL delay_mini ;um delay
-		ACALL pressionado_2 ;leitura do teclado para o input da senha
+        CJNE A, 40h, checar_limite ; | Se não for igual, ir para próxima função
+		ACALL amarelo ; | LEDS amarelos acendem
+		ACALL somar_preco ; | Faz soma do preço total e guarda na fileira de 30
+		MOV 70h, R6 ; | Coloca os itens registrados pelo contador em 70h
+		MOV R6, #0 ; | Reseta o contador para o pagamento
+		MOV R5, #20h ; | Reseta o endereço para escrever senha
+		MOV R0, #0 ; | Reseta R0
+		ACALL valor_total ; | Imprime o valor da compr no LCD
+		ACALL mostrar_senha ; | Mostra espaço para a senha
+		ACALL delay_mini ; | Um delay
+		ACALL pressionado_2 ; | Leitura do teclado para o input da senha
 
 	checar_limite:
-        MOV 10h, #3 ;limite de itens para comparação
-        MOV A, R6 ;coloca o contador em A
-        CJNE A, 10h , checar_coca ;caso contador não estiver no limite, seguir em frente
-        MOV DPTR, #CHEIO ;mensagem do limite
+        MOV 10h, #3 ; | Limite de itens para comparação
+        MOV A, R6 ; | Coloca o contador em A
+        CJNE A, 10h , checar_coca ; | Caso contador não estiver no limite, seguir em frente
+        MOV DPTR, #CHEIO ; | Mensagem do limite
         ACALL delay
-        ACALL clearDisplay ;limpa o display
-        MOV A, #00h ;colocar o cursor no início do LCD
+        ACALL clearDisplay ; | Limpa o display
+        MOV A, #00h ; | Colocar o cursor no início do LCD
 		ACALL delay
         ACALL posicionaCursor
         ACALL delay
@@ -124,92 +124,92 @@ checar_tecla1:
 
 	
 	checar_coca:
-        MOV A, R4 ;coloca o número lido no teclado de volta no A para comparação
-        CJNE A, 4Bh, checar_pepsi ;compara com o número 1, caso contrário, compara com número 2
-        MOV @R0, #5 ;coloca preço de uma coca cola na memória
-        INC R6 ;incrementa o contador
-        INC R5 ;ir para o próximo endereço
+        MOV A, R4 ; | Coloca o número lido no teclado de volta no A para comparação
+        CJNE A, 4Bh, checar_pepsi ; | Compara com o número 1, caso contrário, compara com número 2
+        MOV @R0, #5 ; | Coloca preço de uma coca cola na memória
+        INC R6 ; | Incrementa o contador
+        INC R5 ; | Ir para o próximo endereço
         RET
 	checar_pepsi:
-        CJNE A, 4Ah, checar_sprite  ;compara número 2, caso não seja, olhar número 3
-        MOV @R0, #6 ;colaca preço de uma pepsi na memória.
-        INC R6 ;incrementa o contador
-        INC R5 ;ir para o próximo endereço
+        CJNE A, 4Ah, checar_sprite  ; | Compara número 2, caso não seja, olhar número 3
+        MOV @R0, #6 ; | Coloca o preço de uma pepsi na memória.
+        INC R6 ; | Incrementa o contador
+        INC R5 ; | Ir para o próximo endereço
         RET
 	checar_sprite:
-        CJNE A, 49h, checar_monster ;compara com número 3, caso contrário, compara com número 5
-        MOV @R0, #4 ;coloca preço de uma sprite na memória
-        INC R6 ;incrementa contador
-        INC R5 ;incrementa para o próximo endereço
+        CJNE A, 49h, checar_monster ; | Compara com número 3, caso contrário, compara com número 5
+        MOV @R0, #4 ; | Coloca preço de uma sprite na memória
+        INC R6 ; | Incrementa contador
+        INC R5 ; | Incrementa para o próximo endereço
         RET
 	checar_monster:
         CJNE A, 46h, checar_redbull ;checa número 6, caso contrário, olhar número 5
-        MOV @R0, #8 ;inserir preço de um monster na memória
-        INC R6 ;incrementa o contador
-        INC R5 ;vai para o próximo endereço
+        MOV @R0, #8 ; | Inserir preço de um monster na memória
+        INC R6 ; | Incrementa o contador
+        INC R5 ; | Vai para o próximo endereço
         RET
 	checar_redbull:
-        CJNE A, 47h, checar_sukita ;checar número 5, caso contrário, olhar número 4
-        MOV @R0, #7 ;inserir preço de uma redbull na memória
-        INC R6 ;incrementa o contador
-        INC R5 ;vai para o próximo endereço
+        CJNE A, 47h, checar_sukita ; | Checar número 5, caso contrário, olhar número 4
+        MOV @R0, #7 ; | Inserir preço de uma redbull na memória
+        INC R6 ; | Incrementa o contador
+        INC R5 ; | Vai para o próximo endereço
         RET
 	checar_sukita:
-        CJNE A, 48h, checar_sete ;checar 4, caso contrário, checar 7
-        MOV @R0, #3 ;coloca preço de uma sukita na memória
-        INC R6 ;incrementa o contador
-        INC R5 ;vai para o próximo endereço
+        CJNE A, 48h, checar_sete ; | Checar 4, caso contrário, checar 7
+        MOV @R0, #3 ; | Coloca preço de uma sukita na memória
+        INC R6 ; | Incrementa o contador
+        INC R5 ; | Vai para o próximo endereço
         RET
 	checar_sete:
-	CJNE A, 45h, checar_oito ;se não for 7, comparar com 8
-	ACALL invalido ;imprimir aviso na LCD
+	CJNE A, 45h, checar_oito ; | Se não for 7, comparar com 8
+	ACALL invalido ; | Imprimir aviso na LCD
 	RET
 	checar_oito:
-	CJNE A, 44h, checar_nove ;se não for 8, comparar com 9
-	ACALL invalido ;imprimir aviso na LCD
+	CJNE A, 44h, checar_nove ; | Se não for 8, comparar com 9
+	ACALL invalido ; | Imprimir aviso na LCD
 	RET
 	checar_nove:
-	CJNE A, 43h, fim ;se não for 9, terminar operação
-	ACALL invalido ;imprimir aviso na LCD
+	CJNE A, 43h, fim ; | Se não for 9, terminar operação
+	ACALL invalido ; | Imprimir aviso na LCD
 	RET
 		
 fim:
     ret
 
 somar_preco:
-    MOV B, R6 ;coloca contador em b
-    MOV R0, B ;coloca contador em R0 para loop
-    MOV R1, #20h ;endereço dos preços em R1
+    MOV B, R6 ; | Coloca contador em b
+    MOV R0, B ; | Coloca contador em R0 para loop
+    MOV R1, #20h ; | Endereço dos preços em R1
     MOV A, #0 ;Zerar A para o processo de soma
     loop_soma:
-    ADD A, @R1 ;adiciona o número dentro de r1 com a
-    INC R1 ;incrementa o endereço de r1
-    MOV R3, A ;salva preço em A
-    DJNZ R0, loop_soma ;decrementa R0 e continua o loop caso R0 não seja 0
+    ADD A, @R1 ; | Adiciona o número dentro de r1 com a
+    INC R1 ; | Incrementa o endereço de r1
+    MOV R3, A ; | Salva preço em A
+    DJNZ R0, loop_soma ; | Decrementa R0 e continua o loop caso R0 não seja 0
 
 dividir:
-    MOV B, #10 ;coloca dez em B
+    MOV B, #10 ; | Coloca dez em B
     DIV AB ;divide o valor total por 10 para dividir os dígitos 
-	MOV 30h, #0	;coloca 0 para a comparação da senha
-	MOV 31h, #0 ;coloca 0 para a comparação da senha
-    MOV 32h, A ;coloca decimo em 32h
+	MOV 30h, #0	; | Coloca 0 para a comparação da senha
+	MOV 31h, #0 ; | Coloca 0 para a comparação da senha
+    MOV 32h, A ; | Coloca decimo em 32h
 	;ACALL sendCharacter
     ;INC R0
-    MOV 33h, B ;coloca unidade em 33h
+    MOV 33h, B ; | Coloca unidade em 33h
     ret
 
 checar_tecla2:
-	MOV B, R5 ;coloca endereço em B
-	MOV R0, B ;coloca endereço em R0
-	MOV R4, A ;coloca número digitado em A
+	MOV B, R5 ; | Coloca endereço em B
+	MOV R0, B ; | Coloca endereço em R0
+	MOV R4, A ; | Coloca número digitado em A
 
 	checar_remover:
-        CJNE A, 42h, confirmar_pagamento ;igual no primeiro
+        CJNE A, 42h, confirmar_pagamento ; | Igual no primeiro
 		ACALL amarelo
 		DEC R0
 	    MOV @R0, #0h
-		ACALL apagar_numero ;tira o número inserido da LCD também
-		MOV A, R4 ;coloca o número digitado de volta em A
+		ACALL apagar_numero ; | Tira o número inserido da LCD também
+		MOV A, R4 ; | Coloca o número digitado de volta em A
         DEC R5
 		DEC R6
         RET
@@ -217,10 +217,10 @@ checar_tecla2:
 	confirmar_pagamento:
         CJNE A, 40h, checar_limite2
 		ACALL amarelo
-		ACALL checagem ;compara a senha escrita digita pelo usuário com a senha feita com o preço
+		ACALL checagem ; | Compara a senha escrita digita pelo usuário com a senha feita com o preço
 		RET
 	
-    checar_limite2:  ;igual ao checar_limite1
+    checar_limite2:  ; | Igual ao checar_limite1
         MOV 10h, #4
         MOV A, R6
         CJNE A, 10h , checar_1
@@ -235,7 +235,7 @@ checar_tecla2:
 		ACALL delay
         RET
 
-	checar_1: ;compara o número com 1, coloca na memória e um X na lcd
+	checar_1: ; | Compara o número com 1, coloca na memória e um X na lcd
         MOV A, R4
         CJNE A, 4Bh, checar_2
         MOV @R0, #1
@@ -246,7 +246,7 @@ checar_tecla2:
         INC R5
         RET
 
-	checar_2: ;compara o número digitado com 2, coloca na memória e um X na lcd
+	checar_2: ; | Compara o número digitado com 2, coloca na memória e um X na lcd
         CJNE A, 4Ah, checar_3
         MOV @R0, #2
 		MOV A, #120
@@ -256,7 +256,7 @@ checar_tecla2:
         INC R5
         RET
 
-	checar_3: ;compara o número digitado com 3, coloca na memória e um X na lcd
+	checar_3: ; | Compara o número digitado com 3, coloca na memória e um X na lcd
         CJNE A, 49h, checar_4
         MOV @R0, #3
 		MOV A, #120
@@ -266,7 +266,7 @@ checar_tecla2:
         INC R5
         RET
 
-	checar_4: ;compara o número digitado com 4, coloca na memória e um X na lcd
+	checar_4: ; | Compara o número digitado com 4, coloca na memória e um X na lcd
         CJNE A, 48h, checar_5
         MOV @R0, #4
 		MOV A, #120
@@ -276,7 +276,7 @@ checar_tecla2:
         INC R5
         RET
 
-	checar_5: ;compara o número digitado com 5, coloca na memória e um X na lcd
+	checar_5: ; | Compara o número digitado com 5, coloca na memória e um X na lcd
         CJNE A, 47h, checar_6
         MOV @R0, #5
 		MOV A, #120
@@ -286,7 +286,7 @@ checar_tecla2:
         INC R5
         RET
 
-	checar_6: ;compara o número digitado com 6, coloca na memória e um X na lcd
+	checar_6: ; | Compara o número digitado com 6, coloca na memória e um X na lcd
         CJNE A, 46h, checar_7
         MOV @R0, #6
 		MOV A, #120
@@ -296,7 +296,7 @@ checar_tecla2:
         INC R5
         RET
 
-	checar_7: ;compara o número digitado com 7, coloca na memória e um X na lcd
+	checar_7: ; | Compara o número digitado com 7, coloca na memória e um X na lcd
 	    CJNE A, 45h, checar_8
         MOV @R0, #7
 		MOV A, #120
@@ -306,7 +306,7 @@ checar_tecla2:
         INC R5
         RET
 
-	checar_8: ;compara o número digitado com 8, coloca na memória e um X na lcd
+	checar_8: ; | Compara o número digitado com 8, coloca na memória e um X na lcd
 	    CJNE A, 44h, checar_9
         MOV @R0, #8
 		MOV A, #120
@@ -316,7 +316,7 @@ checar_tecla2:
         INC R5
         RET
 
-	checar_9: ;compara o número digitado com 9, coloca na memória e um X na lcd
+	checar_9: ; | Compara o número digitado com 9, coloca na memória e um X na lcd
 	    CJNE A, 43h, checar_0
         MOV @R0, #9
 		MOV A, #120
@@ -325,7 +325,7 @@ checar_tecla2:
         INC R6
         INC R5
         RET
-		checar_0: ;compara o número digitado com 0, coloca na memória e um X na lcd
+		checar_0: ; | Compara o número digitado com 0, coloca na memória e um X na lcd
         CJNE A, 41h, fim2
         MOV @R0, #0h
 		MOV A, #120
@@ -379,22 +379,22 @@ pressionado_1:
  	;ACALL sendCharacter 
  	CLR F0 ; | limpa f0 para nao dar problemas 
  	DJNZ R3, pressionado_1 ; | DECREMENTA R3 E VOLTA
-	; | Parte para imitar um enter;(#23H = #)(pessoa apos escrever a senha tem que clicar no # para verificar se ta certa ou nao)
+	; | Parte para imitar um enter;(#23H = #)
 	MOV R3, #23H
 ; | itera pela label ate o valor de A ser igual ao de 03h
 
 ; | Quando enter é pressionado no pressionado_1 vem pro pressionado_2
 pressionado_2:
 	ACALL leituraTeclado
-	JNB F0, pressionado_2  ; | if F0 is clear, jump to pressionado_1
+	JNB F0, pressionado_2  ; | if F0 is clear, jump to pressionado_2
     MOV A, #40h ; | pega endereço 40h e guarda ele em A
 	ADD A, R0 ; | adiciona em A o que ta no R0 (valor que a pessoa clicou)
  	MOV R0, A 
 	MOV A, @R0  ; | passa para A o conteudo do que está no endereço de R0
                   
-    MOV R7, A ; | adiciona valor relacionado ao botao do teclado pressionado_1, que esta em a, no R7
+    MOV R7, A ; | Adiciona valor relacionado ao botao do teclado pressionado_2, que esta em a, no R7
     MOV R2, #30H ; | coloca valor 30 no r2 
-    SUBB A, R2 ; | subtrai valor de a com 30 que ai da o valor pressionado_1 (para restar somente o valor de fato pessoa clica em 1 fica guardado 31)
+    SUBB A, R2 ; | subtrai valor de a com 30 que ai da o valor pressionado_2 (para restar somente o valor de fato pessoa clica em 1 fica guardado 31)
     MOV @R1, A ; | coloca o resultado de a no endereco de r1 
     INC R1 ; | incrementa r1 para ir pro prox endereço de valor guardado
     MOV A, R7   
@@ -409,11 +409,11 @@ pressionado_2:
 	JMP pressionado_2
 	
 errado:
-    LCALL negou ;função de erro da senha
-	MOV R6, #0 ;reset contador
-	MOV R5, #20h ;reseta endereço 
-	ACALL valor_total ;imprime preço de novo
-	ACALL mostrar_senha ;começa o processo de escrever a senha de novo
+    LCALL negou ; | Função de erro da senha
+	MOV R6, #0 ; | Reset contador
+	MOV R5, #20h ; | Reseta endereço 
+	ACALL valor_total ; | Imprime preço de novo
+	ACALL mostrar_senha ; | Começa o processo de escrever a senha de novo
 	RET
 
 ; ------------------------------ Leitura do teclado --------------------------------
@@ -828,8 +828,8 @@ invalido:
 	ACALL clearDisplay
 	RET
 
-negou: ;print de transação errada
-	ACALL vermelho ;acende LEDS
+negou: ; | Print de transação errada
+	ACALL vermelho ; | Acende LEDS
 	ACALL clearDisplay
     MOV A, #00h
     ACALL posicionaCursor
@@ -846,8 +846,8 @@ negou: ;print de transação errada
 	RET
 ; | Se passar o motor deve girar conforme a quantidade de produtos vezes dois e após isso mostrar a mensagem para retirada.
 
-passou: ;imprime transação aprovada
-	ACALL verde ;acende LEDS
+passou: ; | Imprime transação aprovada
+	ACALL verde ; | Acende LEDS
 	ACALL clearDisplay
 	ACALL delay
     MOV A, #00h
@@ -862,14 +862,14 @@ passou: ;imprime transação aprovada
     ACALL delay
     ACALL clearDisplay
 
-retirada: ;rotaciona motor e imprime aviso
+retirada: ; | Rotaciona motor e imprime aviso
     MOV A, #00h
     ACALL posicionaCursor
     MOV DPTR,#RETIRE ; | DPTR = Inicio da palavra
 	MOV A, 70h
-	MOV B, #10 ;rotações por item
-	MUL AB ;número de rotações
-	MOV R0, A ;movendo para o loop
+	MOV B, #10 ; | Rotações por item
+	MUL AB ; | Número de rotações
+	MOV R0, A ; | Movendo para o loop
 	ACALL loop_motor
 	ACALL delay 
     ACALL escreveString
@@ -882,7 +882,7 @@ retirada: ;rotaciona motor e imprime aviso
 	ACALL reset
 	SJMP $
 
-valor_total: ;imprime valor da compra
+valor_total: ; | Imprime valor da compra
 	ACALL delay
     MOV A, #40h
 	ACALL delay
@@ -898,7 +898,7 @@ valor_total: ;imprime valor da compra
     ACALL sendCharacter
     RET
 
-mostrar_senha: ;mostra quanto da senha está escrito
+mostrar_senha: ; | Mostra quanto da senha está escrito
    ; ACALL clearDisplay
     ACALL delay
     MOV A, #00h
@@ -908,7 +908,7 @@ mostrar_senha: ;mostra quanto da senha está escrito
     ACALL escreveString
     RET
 
-apagar_numero: ;apaga um número da LCD
+apagar_numero: ; | Apaga um número da LCD
     MOV A, #8
     ADD A, R6
     ACALL posicionaCursor
