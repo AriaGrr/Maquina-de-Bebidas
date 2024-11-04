@@ -188,11 +188,12 @@ somar_preco:
     MOV R0, B
     MOV R1, #20h
     MOV A, #0
+    
     loop_soma:
-    ADD A, @R1
-    INC R1
-    MOV R3, A
-    DJNZ R0, loop_soma
+        ADD A, @R1
+        INC R1
+        MOV R3, A
+        DJNZ R0, loop_soma
 
 dividir:
     MOV B, #10
