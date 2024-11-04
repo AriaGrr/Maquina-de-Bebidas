@@ -665,40 +665,48 @@ CONFERE:
     DB " " ; | O valor (senha) terá quatro digitos, sendo compostos pelo valor da conta em si, e caso o valor da conta não tenha 4 digitos, adicione um 0 ao começo dele.
     DB 00h ; | Declara string, e lê até o fim
 
-COCA:
-    DB "1- Coca    R$ 5 "
+MAQUINA:
+    DB "MAQUINA DE"
     DB 0 ; | Caracter null indica fim da String
 
+BEBIDAS:
+    DB "BEBIDAS"
+    DB 0
+
+COCA:
+    DB " 1- Coca    R$ 5"
+    DB 0 
+
 PEPSI:
-    DB "2- Pepsi   R$ 6 "
+    DB "2- Pepsi   R$ 6"
     DB 0
 
 SPRITE:
-    DB "3- Sprite  R$ 4 "
+    DB "3- Sprite  R$ 4"
     DB 0
 
 SUKITA: 
-    DB "4- Sukita  R$ 3 "
+    DB "4- Sukita  R$ 3"
     DB 0
 
 REDBULL: 
-    DB "5- Redbull R$ 7 "
+    DB "5- Redbull R$ 7"
     DB 0
 
 MONSTER:
-    DB "6- Monster R$ 8 "
+    DB "6- Monster R$ 8"
     DB 0
 
 CANCELAR: 
-    DB "*-   Cancelar   "
+    DB "*-   Cancelar"
     DB 0
 
 PAGAR:
-    DB "#-    Pagar    "
+    DB "#-    Pagar"
     DB 0
 
 ZERO:
-    DB " 0-   Retirar "
+    DB " 0-   Retirar"
     DB 0
 
 TRANSACAO:
@@ -748,6 +756,20 @@ SENHA:
 ; ---------------------------------- Prints ---------------------------------------
 
 opcoes:
+    MOV A, #03h
+    ACALL posicionaCursor
+    MOV DPTR,#MAQUINA ; | DPTR = Inicio da palavra 
+    ACALL escreveString
+    MOV A, #44h
+    ACALL posicionaCursor
+    MOV DPTR,#BEBIDAS
+    ACALL escreveString
+    ACALL delay
+    ACALL clearDisplay
+
+; | Inicio
+    ACALL delay
+
     MOV A, #00h
     ACALL posicionaCursor
     MOV DPTR,#COCA ; | DPTR = Inicio da palavra 
