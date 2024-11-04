@@ -114,6 +114,7 @@ checar_tecla1:
 		MOV R5, #20h
 		MOV R0, #0
 		ACALL valor_total
+		ACALL mostrar_senha
 		ACALL delay_mini
 		ACALL pressionado_2
 	checar_limite:
@@ -218,6 +219,8 @@ checar_tecla2:
 		ACALL amarelo
 		DEC R0
 	    MOV @R0, #0h
+		ACALL apagar_numero
+		MOV A, R4
         DEC R5
 		DEC R6
         RET
@@ -247,60 +250,90 @@ checar_tecla2:
         MOV A, R4
         CJNE A, 4Bh, checar_2
         MOV @R0, #1
+		MOV A, #120
+		ACALL sendCharacter
+		MOV A, R4
         INC R6
         INC R5
         RET
 	checar_2:
         CJNE A, 4Ah, checar_3
         MOV @R0, #2
+		MOV A, #120
+		ACALL sendCharacter
+		MOV A, R4
         INC R6
         INC R5
         RET
 	checar_3:
         CJNE A, 49h, checar_4
         MOV @R0, #3
+		MOV A, #120
+		ACALL sendCharacter
+		MOV A, R4
         INC R6
         INC R5
         RET
 	checar_4:
         CJNE A, 48h, checar_5
         MOV @R0, #4
+		MOV A, #120
+		ACALL sendCharacter
+		MOV A, R4
         INC R6
         INC R5
         RET
 	checar_5:
         CJNE A, 47h, checar_6
         MOV @R0, #5
+		MOV A, #120
+		ACALL sendCharacter
+		MOV A, R4
         INC R6
         INC R5
         RET
 	checar_6:
         CJNE A, 46h, checar_7
         MOV @R0, #6
+		MOV A, #120
+		ACALL sendCharacter
+		MOV A, R4
         INC R6
         INC R5
         RET
 	checar_7:
 	    CJNE A, 45h, checar_8
         MOV @R0, #7
+		MOV A, #120
+		ACALL sendCharacter
+		MOV A, R4
         INC R6
         INC R5
         RET
 	checar_8:
 	    CJNE A, 44h, checar_9
         MOV @R0, #8
+		MOV A, #120
+		ACALL sendCharacter
+		MOV A, R4
         INC R6
         INC R5
         RET
 	checar_9:
 	    CJNE A, 43h, checar_0
         MOV @R0, #9
+		MOV A, #120
+		ACALL sendCharacter
+		MOV A, R4
         INC R6
         INC R5
         RET
 		checar_0:
 	CJNE A, 41h, fim2
 	MOV @R0, #0h
+		MOV A, #120
+		ACALL sendCharacter
+		MOV A, R4
 	INC R6
 	INC R5
 	RET
@@ -377,42 +410,7 @@ pressionado_2:
 ; | itera pela label ate o valor de A ser igual ao de 03h
 	JMP pressionado_2
 	
-enter:
-    CLR A
- 	ACALL leituraTeclado
-    JNB F0, enter 
-	ACALL somar_preco
-    MOV A, #40h
-	ADD A, R0
-	MOV R0, A
- 	MOV A, @R0  
-	CLR F0 ; | coloca clr f0 para dar certo
-    CJNE A, 03H, enter
-; | Parte onde comparamos a senha salva com os digitados pelo usuario 
-    MOV R3, #4 ; | loop 4x
-    MOV R0, #30H ; | valor 30 para ir ao endereço 30 e comparar (ta senha padrao)
-    MOV R1, #60H ; | senha que usuario digitou
 
-
-senha:
-    MOV A, #06h ; | centralizado
- 	ACALL posicionaCursor ; | escrever senha digitada na memoria
-    ; | itera pela posicao de memoria do 40h para ver que valor o usuario digitou e salva-los nas posicao a partir da 60h
-    MOV R1, #60H
-	MOV R3, #4 ;4 repeticoes pq senha tem 4 digitos
-
-; | Pra comparar a "senha" (valor da compra, com zeros a esquerda até ter 4 digitos)
-compara:
-    MOV A, @R0 ; | lê o valor do endereço de R0 para A.
-    MOV 70H,@R1
-    CJNE A, 70H, errado; | DIFERENTE PULA
-    INC R0 ; | incrementa r0 para comparar o proximo valor da senha
-    INC R1  ; | incrementa r1 para comparar o prox valor da senha com valor digitado pelo user
-    DJNZ R3, compara ; | LOOP 4X 
-; | "Menu"
-; | Deve girar n*2 vezes conforme a quantidade de produtos
- 	SETB P3.1 ; |  Gira motor no sentido horário se a pessoaa acerta a senha
- 	CLR P3.0
 
 ; | Completar
 errado:
@@ -724,6 +722,9 @@ DB 0
 VALOR:
 DB "Total R$"
 DB 0
+SENHA:
+DB "Senha - "
+DB 0
 ; ---------------------------------- Prints ---------------------------------------
 
 opcoes:
@@ -831,9 +832,12 @@ negou:
 
 passou:
 	ACALL verde
+	ACALL clearDisplay
+	ACALL delay
     MOV A, #00h
     ACALL posicionaCursor
     MOV DPTR,#TRANSACAO ; | DPTR = Inicio da palavra 
+	ACALL delay
     ACALL escreveString
     MOV A, #40h
     ACALL posicionaCursor
@@ -873,6 +877,29 @@ ACALL sendCharacter
 MOV A, 33h
 ADD A, #30h
 ACALL sendCharacter
+RET
+
+mostrar_senha:
+
+ACALL clearDisplay
+ACALL delay
+MOV A, #00h
+
+ACALL posicionaCursor
+ACALL delay
+MOV DPTR, #SENHA
+ACALL escreveString
+RET
+
+apagar_numero:
+MOV A, #8
+ADD A, R6
+ACALL posicionaCursor
+MOV A, #' '
+ACALL sendCharacter
+MOV A, #8
+ADD A, R6
+ACALL posicionaCursor
 RET
 ; | Fazer o display atualizar com valor e o número de produtos do pedido, conforme a pessoa aperta o teclado em sua primeira fase.
 
