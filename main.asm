@@ -87,10 +87,12 @@ checar_tecla1:
         DEC R5
 		DEC R6
         RET
+
 	checar_reset:
-	CJNE A, 42h, checkout
-	ACALL amarelo
-	LJMP reset
+        CJNE A, 42h, checkout
+        ACALL amarelo
+        LJMP reset
+
 	checkout:
         CJNE A, 40h, checar_limite
 		ACALL amarelo
@@ -103,6 +105,7 @@ checar_tecla1:
 		ACALL mostrar_senha
 		ACALL delay_mini
 		ACALL pressionado_2
+
 	checar_limite:
         MOV 10h, #3
         MOV A, R6
@@ -170,11 +173,10 @@ checar_tecla1:
 	ACALL invalido
 	RET
 		
-    fim:
+fim:
     ret
 
 somar_preco:
-	
     MOV B, R6
     MOV R0, B
     MOV R1, #20h
@@ -615,7 +617,7 @@ retornaCursor :
     CALL delay ; wait for BF to clear
     RET
 
-; ------------------------------- Rotação do Motor ---------------------------------
+; ------------------------------- Motor ------------------------------------------
 
 ; | A cada rotação do motor retira 1 da quantidade de itens, enquanto a quantidade não for 0, o motor deve girar.
 
@@ -625,8 +627,14 @@ rotacao:
 	SETB TR1
     JNB P3.2, rotacao ; | Espera até que sensor no pino P3.2 indique a rotação completa
 	CLR P3.1  ; | Parar o motor
-	
 	RET
+
+loop_motor:
+    ACALL rotacao
+    DJNZ R0, loop_motor
+    SETB P3.0
+    SETB P3.1
+    RET
        
 ; ----------------------------------- Bebidas e + ----------------------------------
 
@@ -712,7 +720,7 @@ VALOR:
 SENHA:
     DB "Senha - "
     DB 0
-    
+
 ; ---------------------------------- Prints ---------------------------------------
 
 opcoes:
@@ -793,6 +801,7 @@ opcoes:
 	ACALL clearDisplay
 	ACALL delay
 	RET
+
 ; | Nega a transação caso o valor inserido esteja incorreto e reseta tudo.
 invalido:
     MOV A, #00h
@@ -803,6 +812,7 @@ invalido:
 	ACALL delay
 	ACALL clearDisplay
 	RET
+
 negou:
 	ACALL vermelho
     MOV A, #00h
@@ -835,7 +845,6 @@ passou:
     ACALL clearDisplay
 
 retirada:
-	
     MOV A, #00h
     ACALL posicionaCursor
     MOV DPTR,#RETIRE ; | DPTR = Inicio da palavra
@@ -854,41 +863,40 @@ retirada:
     ACALL clearDisplay
 	ACALL reset
 	SJMP $
+
 valor_total:
-MOV A, #00h
-ACALL posicionaCursor
-MOV DPTR, #VALOR
-ACALL escreveString
-MOV A, 32h
-ADD A, #30h
-ACALL sendCharacter
-MOV A, 33h
-ADD A, #30h
-ACALL sendCharacter
-RET
+    MOV A, #00h
+    ACALL posicionaCursor
+    MOV DPTR, #VALOR
+    ACALL escreveString
+    MOV A, 32h
+    ADD A, #30h
+    ACALL sendCharacter
+    MOV A, 33h
+    ADD A, #30h
+    ACALL sendCharacter
+    RET
 
 mostrar_senha:
-
-ACALL clearDisplay
-ACALL delay
-MOV A, #00h
-
-ACALL posicionaCursor
-ACALL delay
-MOV DPTR, #SENHA
-ACALL escreveString
-RET
+    ACALL clearDisplay
+    ACALL delay
+    MOV A, #00h
+    ACALL posicionaCursor
+    ACALL delay
+    MOV DPTR, #SENHA
+    ACALL escreveString
+    RET
 
 apagar_numero:
-MOV A, #8
-ADD A, R6
-ACALL posicionaCursor
-MOV A, #' '
-ACALL sendCharacter
-MOV A, #8
-ADD A, R6
-ACALL posicionaCursor
-RET
+    MOV A, #8
+    ADD A, R6
+    ACALL posicionaCursor
+    MOV A, #' '
+    ACALL sendCharacter
+    MOV A, #8
+    ADD A, R6
+    ACALL posicionaCursor
+    RET
 ; | Fazer o display atualizar com valor e o número de produtos do pedido, conforme a pessoa aperta o teclado em sua primeira fase.
 
 ; ---------------------------------- Leds ------------------------------------
@@ -939,12 +947,6 @@ amarelo:
     CALL apagar
     RET
 
-loop_motor:
-ACALL rotacao
-DJNZ R0, loop_motor
-SETB P3.0
-SETB P3.1
-RET
 ; ---------------------------------- Delays ------------------------------------
 
 ; | Delay normal
