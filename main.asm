@@ -196,12 +196,13 @@ dividir:
 	;ACALL sendCharacter
     ;INC R0
     MOV 33h, B
-
     ret
+
 checar_tecla2:
 	MOV B, R5
 	MOV R0, B
 	MOV R4, A
+
 	checar_remover:
         CJNE A, 42h, confirmar_pagamento
 		ACALL amarelo
@@ -218,7 +219,8 @@ checar_tecla2:
 		ACALL amarelo
 		ACALL checagem
 		RET
-	checar_limite2:
+	
+    checar_limite2:
         MOV 10h, #4
         MOV A, R6
         CJNE A, 10h , checar_1
@@ -233,7 +235,6 @@ checar_tecla2:
 		ACALL delay
         RET
 
-
 	checar_1:
         MOV A, R4
         CJNE A, 4Bh, checar_2
@@ -244,6 +245,7 @@ checar_tecla2:
         INC R6
         INC R5
         RET
+
 	checar_2:
         CJNE A, 4Ah, checar_3
         MOV @R0, #2
@@ -253,6 +255,7 @@ checar_tecla2:
         INC R6
         INC R5
         RET
+
 	checar_3:
         CJNE A, 49h, checar_4
         MOV @R0, #3
@@ -262,6 +265,7 @@ checar_tecla2:
         INC R6
         INC R5
         RET
+
 	checar_4:
         CJNE A, 48h, checar_5
         MOV @R0, #4
@@ -271,6 +275,7 @@ checar_tecla2:
         INC R6
         INC R5
         RET
+
 	checar_5:
         CJNE A, 47h, checar_6
         MOV @R0, #5
@@ -280,6 +285,7 @@ checar_tecla2:
         INC R6
         INC R5
         RET
+
 	checar_6:
         CJNE A, 46h, checar_7
         MOV @R0, #6
@@ -289,6 +295,7 @@ checar_tecla2:
         INC R6
         INC R5
         RET
+
 	checar_7:
 	    CJNE A, 45h, checar_8
         MOV @R0, #7
@@ -298,6 +305,7 @@ checar_tecla2:
         INC R6
         INC R5
         RET
+
 	checar_8:
 	    CJNE A, 44h, checar_9
         MOV @R0, #8
@@ -307,6 +315,7 @@ checar_tecla2:
         INC R6
         INC R5
         RET
+
 	checar_9:
 	    CJNE A, 43h, checar_0
         MOV @R0, #9
@@ -317,16 +326,17 @@ checar_tecla2:
         INC R5
         RET
 		checar_0:
-	CJNE A, 41h, fim2
-	MOV @R0, #0h
+        CJNE A, 41h, fim2
+        MOV @R0, #0h
 		MOV A, #120
 		ACALL sendCharacter
 		MOV A, R4
-	INC R6
-	INC R5
-	RET
+        INC R6
+        INC R5
+        RET
+
     fim2:
-    ret
+        ret
 
 checagem:
     MOV R0, #20h
@@ -395,7 +405,7 @@ pressionado_2:
  	DJNZ R3, pressionado_2 ; | DECREMENTA R3 E VOLTA
 	; | Parte para imitar um enter;(#23H = #)(pessoa apos escrever a senha tem que clicar no # para verificar se ta certa ou nao)
 	MOV R3, #23H
-; | itera pela label ate o valor de A ser igual ao de 03h
+    ; | itera pela label ate o valor de A ser igual ao de 03h
 	JMP pressionado_2
 	
 errado:
@@ -673,6 +683,7 @@ CANCELAR:
 PAGAR:
     DB "#-    Pagar    "
     DB 0
+
 ZERO:
     DB " 0-   Retirar "
     DB 0
