@@ -1,6 +1,4 @@
-
-
-; -------------------------------- Repositorio ---------------------------------
+; -------------------------------- Repositorio -------------------------------------
 
 ; |
 ; | https://github.com/AriaGrr/Maquina-de-Bebidas
@@ -24,7 +22,7 @@ LJMP reset
 
 org 0030h
 
-; ------------------------------ Reseta e Mapeia Teclado --------------------------------
+; ------------------------------ Reseta e Mapeia Teclado ----------------------------
 
 ; | MAPEAMENTO DAS TECLAS (salva os valores das teclas na memoria a partir do endereço 40h)
 
@@ -32,9 +30,6 @@ reset:
 ; | Limpar os registradores (se tiver mais coisas que são usadas e precisa limpar taca aqui)
     clr A
 
-    
-; | Desabilitar todas as interrupções
-    ;EA EQU 0
 	MOV R0, #0
 	MOV R1, #0
 	MOV R2, #0
@@ -76,18 +71,9 @@ reset:
 ; | Saltar para o início do programa principal
     LJMP main
 
-; ------------------------------ Mapeia Valores ----------------------------------
-
-; | Talvez desnecessário, analisar.
-; | Valor inicial da conta do endereço 30 ao 33
-
-
-
 ; --------------------------------- Subrotinas -----------------------------------
 
 ; --------------------------------- Comparadores ---------------------------------
-
-; | ARRUMAR ESTA PARTE DO CÓDIGO PARA NOSSAS NECESSIDADES
 
 checar_tecla1:
 	MOV B, R5
@@ -341,25 +327,26 @@ checar_tecla2:
     ret
 
 checagem:
-MOV R0, #20h
-MOV R1, #30h
-MOV R2, #0
-MOV R3, #4
-loop_checagem:
-MOV A, @R1	
-CJNE A, 20h, errado
-INC R1
-MOV A, @R1	
-CJNE A, 21h, errado
-INC R1
-MOV A, @R1	
-CJNE A, 22h, errado
-INC R1
-MOV A, @R1	
-CJNE A, 23h, errado
-INC R1
-ACALL passou
-RET
+    MOV R0, #20h
+    MOV R1, #30h
+    MOV R2, #0
+    MOV R3, #4
+    loop_checagem:
+    MOV A, @R1	
+    CJNE A, 20h, errado
+    INC R1
+    MOV A, @R1	
+    CJNE A, 21h, errado
+    INC R1
+    MOV A, @R1	
+    CJNE A, 22h, errado
+    INC R1
+    MOV A, @R1	
+    CJNE A, 23h, errado
+    INC R1
+    ACALL passou
+    RET
+
 pressionado_1:
 	ACALL leituraTeclado
 	JNB F0, pressionado_1  ; | if F0 is clear, jump to pressionado_1
@@ -400,7 +387,6 @@ pressionado_2:
     INC R1 ; | incrementa r1 para ir pro prox endereço de valor guardado
     MOV A, R7   
 	 
-    
 	ACALL checar_tecla2
  	;ACALL sendCharacter 
  	CLR F0 ; | limpa f0 para nao dar problemas 
@@ -410,12 +396,10 @@ pressionado_2:
 ; | itera pela label ate o valor de A ser igual ao de 03h
 	JMP pressionado_2
 	
-
-
-; | Completar
 errado:
     LCALL negou
 	RET
+
 ; ------------------------------ Leitura do teclado --------------------------------
      
 leituraTeclado:
@@ -423,23 +407,23 @@ leituraTeclado:
  	MOV P0, #0FFh	
  	CLR P0.0			; | clear row0
  	CALL colScan		; | call column-scan subroutine
-	JB F0, finish		; | if F0 is set, jump to end of program 		; | (because the pressed key was found and its number is in  R0)
+	JB F0, finish		; | if F0 is set, jump to end of program 		
+    ; | (because the pressed key was found and its number is in  R0)
       	; | scan row1
  	SETB P0.0			; | set row0
  	CLR P0.1			; | clear row1
  	CALL colScan		; | call column-scan subroutine
- 	JB F0, finish		; | if F0 is set, jump to end of program 						; | (because the pressed key was found and its number is in  R0)
+ 	JB F0, finish		; | if F0 is set, jump to end of program 						
       	; | scan row2
  	SETB P0.1			; | set row1
  	CLR P0.2			; | clear row2
  	CALL colScan		; | call column-scan subroutine
- 	JB F0, finish		; | if F0 is set, jump to end of program 				; | (because the pressed key was found and its number is in  R0)
+ 	JB F0, finish		; | if F0 is set, jump to end of program 				
       	; | scan row3
  	SETB P0.2			; | set row2
  	CLR P0.3			; | clear row3
  	CALL colScan		; | call column-scan subroutine
 	JB F0, finish		; | if F0 is set, jump to end of program 
-      						; | (because the pressed key was found and its number is in  R0)
     
     finish:
         RET
@@ -706,25 +690,29 @@ PRODUTOS:
     DB 0
 
 AVISO:
-DB " Compras de ate"
-DB 0
+    DB " Compras de ate"
+    DB 0
+
 AVISO_2:
-DB "3 itens"
-DB 0
+    DB "3 itens"
+    DB 0
+
 CHEIO:
-DB " Limite excedido"
-DB 0 
+    DB " Limite excedido"
+    DB 0 
 
 NUMERO_INVALIDO:
-DB "Numero invalido"
-DB 0
+    DB "Numero invalido"
+    DB 0
 
 VALOR:
-DB "Total R$"
-DB 0
+    DB "Total R$"
+    DB 0
+
 SENHA:
-DB "Senha - "
-DB 0
+    DB "Senha - "
+    DB 0
+    
 ; ---------------------------------- Prints ---------------------------------------
 
 opcoes:
