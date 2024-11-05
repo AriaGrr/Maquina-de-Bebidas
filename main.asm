@@ -24,6 +24,7 @@ org 0030h
 zerando:
     MOV R0, #10H ; | Inicializa o registrador R0 com o endereço inicial
     MOV R1, #20H ; | Define o número de bytes a serem zerados (ajuste conforme necessário)
+
     loop_zerar:
         MOV @R0, #0 ; | Escreve 0 no endereço apontado por R0
         INC R0 ; | Incrementa o endereço para o próximo byte
@@ -43,7 +44,7 @@ reset:
 	MOV R4, #0
 	MOV R5, #20h
 	MOV R7, #0
-    
+
 ; | MAPEAMENTO DAS TECLAS (salva os valores das teclas na memoria a partir do endereço 40h)
     MOV 40H, #'#' 
     MOV 41H, #'0'
@@ -891,8 +892,8 @@ negou: ; | Print de transação errada
     ACALL clearDisplay
 	ACALL delay
 	RET
+    
 ; | Se passar o motor deve girar conforme a quantidade de produtos vezes dois e após isso mostrar a mensagem para retirada.
-
 passou: ; | Imprime transação aprovada
 	ACALL verde ; | Acende LEDS
 	ACALL clearDisplay
