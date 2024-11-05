@@ -21,17 +21,19 @@ org 0030h
 
 ; ------------------------------ Reseta e Mapeia Teclado ----------------------------
 
-; | MAPEAMENTO DAS TECLAS (salva os valores das teclas na memoria a partir do endereço 40h)
-
-reset: 
-; | Limpar os registradores e + (se tiver mais coisas que são usadas e precisa limpar taca aqui)
-
-    MOV R0, #20H ; | Inicializa o registrador R0 com o endereço inicial
-    MOV R1, #10H ; | Define o número de bytes a serem zerados (ajuste conforme necessário)
+zerando:
+    MOV R0, #10H ; | Inicializa o registrador R0 com o endereço inicial
+    MOV R1, #20H ; | Define o número de bytes a serem zerados (ajuste conforme necessário)
     loop_zerar:
         MOV @R0, #0 ; | Escreve 0 no endereço apontado por R0
         INC R0 ; | Incrementa o endereço para o próximo byte
         DJNZ R1, loop_zerar ; | Decrementa o contador e repete o loop
+        RET
+
+reset: 
+; | Limpar os registradores e + (se tiver mais coisas que são usadas e precisa limpar taca aqui)
+
+    ACALL zerando
 
     clr A
 	MOV R0, #0
@@ -41,6 +43,8 @@ reset:
 	MOV R4, #0
 	MOV R5, #20h
 	MOV R7, #0
+    
+; | MAPEAMENTO DAS TECLAS (salva os valores das teclas na memoria a partir do endereço 40h)
     MOV 40H, #'#' 
     MOV 41H, #'0'
     MOV 42H, #'*'
