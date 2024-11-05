@@ -21,9 +21,10 @@ org 0030h
 
 ; ------------------------------ Reseta e Mapeia Teclado ----------------------------
 
+; | Ao ter a compra aprovada, fica preso no looping. Erro desconhecido.
 zerando:
     MOV R0, #10H ; | Inicializa o registrador R0 com o endereço inicial
-    MOV R1, #20H ; | Define o número de bytes a serem zerados (ajuste conforme necessário)
+    MOV R1, #10H ; | Define o número de bytes a serem zerados (ajuste conforme necessário)
 
     loop_zerar:
         MOV @R0, #0 ; | Escreve 0 no endereço apontado por R0
@@ -34,9 +35,9 @@ zerando:
 reset: 
 ; | Limpar os registradores e + (se tiver mais coisas que são usadas e precisa limpar taca aqui)
 
-    ACALL zerando
-
+    ;ACALL zerando
     clr A
+
 	MOV R0, #0
 	MOV R1, #0
 	MOV R2, #0
@@ -44,6 +45,42 @@ reset:
 	MOV R4, #0
 	MOV R5, #20h
 	MOV R7, #0
+
+    MOV 20H, #0
+	MOV 21H, #0
+	MOV 22H, #0
+	MOV 23H, #0
+	MOV 24H, #0
+	MOV 25H, #0
+    MOV 26H, #0
+	MOV 27H, #0
+    MOV 28H, #0
+	MOV 29H, #0
+
+    MOV 2AH, #0
+    MOV 2BH, #0
+	MOV 2CH, #0
+    MOV 2DH, #0
+    MOV 2EH, #0
+	MOV 2FH, #0
+
+    MOV 10H, #0
+	MOV 11H, #0
+	MOV 12H, #0
+	MOV 13H, #0
+	MOV 14H, #0
+	MOV 15H, #0
+    MOV 16H, #0
+	MOV 17H, #0
+    MOV 18H, #0
+	MOV 19H, #0
+
+    MOV 1AH, #0
+    MOV 1BH, #0
+	MOV 1CH, #0
+    MOV 1DH, #0
+    MOV 1EH, #0
+	MOV 1FH, #0
 
 ; | MAPEAMENTO DAS TECLAS (salva os valores das teclas na memoria a partir do endereço 40h)
     MOV 40H, #'#' 
@@ -58,6 +95,7 @@ reset:
     MOV 49H, #'3'
     MOV 4AH, #'2'
     MOV 4BH, #'1'
+
 	MOV 70H, #0
     MOV R6, #00
     ;MOV R5, #30h
@@ -71,12 +109,6 @@ reset:
     MOV 37H, #0
     MOV 38H, #0
     MOV 39H, #0
-	MOV 20H, #0
-	MOV 21H, #0
-	MOV 22H, #0
-	MOV 23H, #0
-	MOV 24H, #0
-	MOV 25H, #0
 ; | Saltar para o início do programa principal
     LJMP main
 
@@ -122,15 +154,11 @@ checar_tecla1:
         MOV A, R6 ; | Coloca o contador em A
         CJNE A, 10h , checar_coca ; | Caso contador não estiver no limite, seguir em frente
         MOV DPTR, #CHEIO ; | Mensagem do limite
-        ACALL delay
         ACALL clearDisplay ; | Limpa o display
         MOV A, #00h ; | Colocar o cursor no início do LCD
-		ACALL delay
         ACALL posicionaCursor
-        ACALL delay
         ACALL escreveString
 		ACALL clearDisplay
-		ACALL delay
         RET
 
 	checar_coca:
@@ -242,15 +270,7 @@ checar_tecla2:
         MOV 10h, #4
         MOV A, R6
         CJNE A, 10h , checar_1
-        ;MOV DPTR, #CHEIO
         ACALL delay
-        ;ACALL clearDisplay
-        ;MOV A, #00h
-        ;ACALL posicionaCursor
-        ;ACALL delay
-        ;ACALL escreveString
-		;ACALL clearDisplay	
-		;ACALL delay
         RET
 
 	checar_1: ; | Compara o número com 1, coloca na memória e um X na lcd
@@ -517,7 +537,7 @@ lcd_init:
     SETB EN
     CLR EN
 
-    CALL delay
+    CALL delay_mini
 
     SETB EN
     CLR EN
@@ -527,7 +547,7 @@ lcd_init:
     SETB EN
     CLR EN
 
-    CALL delay
+    CALL delay_mini
     CLR P1.7
     CLR P1.6
     CLR P1.5
@@ -541,7 +561,7 @@ lcd_init:
 
     SETB EN
     CLR EN
-    CALL delay
+    CALL delay_mini
 
 ; | Display on/o
 ; | The display
@@ -560,7 +580,7 @@ lcd_init:
 
     SETB EN
     CLR EN
-    CALL delay
+    CALL delay_mini
     RET
 
 ; -------------------------------- Escreve String ----------------------------------
@@ -683,7 +703,7 @@ CONFERE:
     DB 00h ; | Declara string, e lê até o fim
 
 MAQUINA:
-    DB "MAQUINA DE"
+    DB "   MAQUINA DE"
     DB 0 ; | Caracter null indica fim da String
 
 BEBIDAS:
@@ -691,7 +711,7 @@ BEBIDAS:
     DB 0
 
 COCA:
-    DB " 1- Coca    R$ 5"
+    DB "  1- Coca    R$ 5"
     DB 0 
 
 PEPSI:
@@ -699,7 +719,7 @@ PEPSI:
     DB 0
 
 SPRITE:
-    DB "3- Sprite  R$ 4"
+    DB " 3- Sprite  R$ 4"
     DB 0
 
 SUKITA: 
@@ -707,27 +727,27 @@ SUKITA:
     DB 0
 
 REDBULL: 
-    DB "5- Redbull R$ 7"
+    DB " 5- Redbull R$ 7"
     DB 0
 
 MONSTER:
     DB "6- Monster R$ 8"
     DB 0
 
+PAGAR:
+    DB " #-    Pagar"
+    DB 0
+
 CANCELAR: 
     DB "*-   Cancelar"
     DB 0
 
-PAGAR:
-    DB "#-    Pagar"
-    DB 0
-
 ZERO:
-    DB " 0- Retirar item"
+    DB "  0- Retirar item"
     DB 0
 
 TRANSACAO:
-    DB "    TRANSACAO "
+    DB "   TRANSACAO "
     DB 0
 
 APROVADA:
@@ -747,7 +767,7 @@ PRODUTOS:
     DB 0
 
 AVISO:
-    DB "  Compras de ate"
+    DB "   Compras de ate"
     DB 0
 
 AVISO_2:
@@ -755,7 +775,7 @@ AVISO_2:
     DB 0
 
 CHEIO:
-    DB "LIMITE EXCEDIDO"
+    DB "  LIMITE EXCEDIDO"
     DB 0 
 
 NUMERO_INVALIDO:
@@ -773,7 +793,8 @@ SENHA:
 ; ---------------------------------- Prints ---------------------------------------
 
 opcoes:
-    MOV A, #03h
+
+    MOV A, #00h
     ACALL posicionaCursor
     MOV DPTR,#MAQUINA ; | DPTR = Inicio da palavra 
     ACALL escreveString
@@ -781,11 +802,11 @@ opcoes:
     ACALL posicionaCursor
     MOV DPTR,#BEBIDAS
     ACALL escreveString
-    ACALL delay
+    ACALL delay_mini
     ACALL clearDisplay
 
 ; | Inicio
-    ACALL delay
+    ACALL delay_mini
 
     MOV A, #00h
     ACALL posicionaCursor
@@ -795,16 +816,16 @@ opcoes:
     ACALL posicionaCursor
     MOV DPTR,#PEPSI
     ACALL escreveString
-    ACALL delay
+    ACALL delay_mini
     ACALL clearDisplay
 
 ; | Inicio
-    ACALL delay
+    ACALL delay_mini
 
     MOV A, #00h
     ACALL posicionaCursor
     MOV DPTR, #SPRITE
-    ACALL delay
+    ACALL delay_mini
     ACALL escreveString
     MOV A, #40h
     ACALL posicionaCursor
@@ -815,12 +836,12 @@ opcoes:
 ; | Fim 
 
 ; | Para exibir no display 
-    ACALL delay
+    ACALL delay_mini
 
     MOV A, #00h
     ACALL posicionaCursor
     MOV DPTR, #REDBULL
-    ACALL delay
+    ACALL delay_mini
     ACALL escreveString
 ; | Segunda linha 
     MOV A, #40h
@@ -828,41 +849,41 @@ opcoes:
     MOV DPTR, #MONSTER
     ACALL escreveString
     ACALL clearDisplay 
-	ACALL delay
+	ACALL delay_mini
 
 ; | Fim
 
-    ACALL delay
+    ACALL delay_mini
 
     MOV A, #00h
     ACALL posicionaCursor
     MOV DPTR, #PAGAR
-    ACALL delay
+    ACALL delay_mini
     ACALL escreveString
     MOV A, #40h
     ACALL posicionaCursor
     MOV DPTR, #CANCELAR
     ACALL escreveString
     ACALL clearDisplay 
-	ACALL delay
+	ACALL delay_mini
 	MOV A, #00h
 	ACALL posicionaCursor
 	MOV DPTR, #ZERO
 	ACALL escreveString
-	ACALL delay
+	ACALL delay_mini
 	ACALL clearDisplay
-	ACALL delay
+	ACALL delay_mini
 	MOV A, #00h
 	ACALL posicionaCursor
 	MOV DPTR, #AVISO
 	ACALL escreveString
-	ACALL delay
+	ACALL delay_mini
 	MOV A, #40h
 	ACALL posicionaCursor
 	MOV DPTR, #AVISO_2
 	ACALL escreveString
 	ACALL clearDisplay
-	ACALL delay
+	;ACALL delay_mini
 	RET
 
 ; | Nega a transação caso o valor inserido esteja incorreto e reseta tudo.
@@ -870,9 +891,9 @@ invalido:
     MOV A, #00h
     ACALL posicionaCursor
     MOV DPTR,#NUMERO_INVALIDO ; | DPTR = Inicio da palavra 
-	ACALL delay
+	;ACALL delay_mini
     ACALL escreveString
-	ACALL delay
+	;ACALL delay_mini
 	ACALL clearDisplay
 	RET
 
@@ -892,7 +913,7 @@ negou: ; | Print de transação errada
     ACALL clearDisplay
 	ACALL delay
 	RET
-    
+
 ; | Se passar o motor deve girar conforme a quantidade de produtos vezes dois e após isso mostrar a mensagem para retirada.
 passou: ; | Imprime transação aprovada
 	ACALL verde ; | Acende LEDS
@@ -974,7 +995,7 @@ apagar_numero: ; | Apaga um número da LCD
 acender:
     MOV A, R0 ; | Assumindo que o número do pino está em R0
     MOV P2, A
-    ACALL delay
+    ACALL delay2
     RET
 
 ; | Apaga todos os leds
@@ -1028,6 +1049,12 @@ delay:
     DJNZ R3, $
     DJNZ R4, $
     RET
+
+delay2:
+    MOV R1, #50
+    MOV R0, #50
+    DJNZ R0, $
+    DJNZ R1, $
 
 delay_mini:
    MOV R1, #50
