@@ -1,19 +1,16 @@
 ; -------------------------------- Repositorio -------------------------------------
-
 ; |
 ; | https://github.com/AriaGrr/Maquina-de-Bebidas
 ; | Colaboradores: 
 ; | Marjorie Luize Martins Costa
 ; | Nuno Martins Guilhermino da Silva
 ; |
-
 ; -------------------- Mapeamento de Hardware (8051) --------------------------------
 
 ; | Usar RS no lugar de P1.3 e EN no lugar de P1.2
 
           RS      equ     P1.3    ; | Reg Select ligado em P1.3
           EN      equ     P1.2    ; | Enable ligado em P1.2
-
 
 ; ------------------------------ Inicio do programa --------------------------------
 
@@ -390,7 +387,6 @@ pressionado_1:
     MOV @R1, A ; | coloca o resultado de a no endereco de r1 
     INC R1 ; | incrementa r1 para ir pro prox endereço de valor guardado
     MOV A, R7   
-	 
     
 	ACALL checar_tecla1
  	;ACALL sendCharacter 
@@ -827,7 +823,7 @@ opcoes:
     MOV DPTR, #MONSTER
     ACALL escreveString
     ACALL clearDisplay 
-		ACALL delay
+	ACALL delay
 
 ; | Fim
 
@@ -909,25 +905,25 @@ passou: ; | Imprime transação aprovada
     ACALL delay
     ACALL clearDisplay
 
-retirada: ; | Rotaciona motor e imprime aviso
-    MOV A, #00h
-    ACALL posicionaCursor
-    MOV DPTR,#RETIRE ; | DPTR = Inicio da palavra
-	MOV A, 70h
-	MOV B, #10 ; | Rotações por item
-	MUL AB ; | Número de rotações
-	MOV R0, A ; | Movendo para o loop
-	ACALL loop_motor
-	ACALL delay 
-    ACALL escreveString
-    MOV A, #40h
-    ACALL posicionaCursor
-    MOV DPTR,#PRODUTOS
-    ACALL escreveString
-    ACALL delay
-    ACALL clearDisplay
-	ACALL reset
-	SJMP $
+    retirada: ; | Rotaciona motor e imprime aviso
+        MOV A, #00h
+        ACALL posicionaCursor
+        MOV DPTR,#RETIRE ; | DPTR = Inicio da palavra
+        MOV A, 70h
+        MOV B, #10 ; | Rotações por item
+        MUL AB ; | Número de rotações
+        MOV R0, A ; | Movendo para o loop
+        ACALL loop_motor
+        ACALL delay 
+        ACALL escreveString
+        MOV A, #40h
+        ACALL posicionaCursor
+        MOV DPTR,#PRODUTOS
+        ACALL escreveString
+        ACALL delay
+        ACALL clearDisplay
+        ACALL reset
+        SJMP $
 
 valor_total: ; | Imprime valor da compra
 	ACALL delay
