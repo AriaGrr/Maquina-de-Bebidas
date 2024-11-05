@@ -15,6 +15,7 @@
 ; ------------------------------ Inicio do programa --------------------------------
 
 org 0000H
+ACALL lcd_init
 LJMP reset
 
 org 0030h
@@ -37,6 +38,16 @@ reset:
 
     ;ACALL zerando
     clr A
+    MOV B, #0
+
+    SETB P0.0
+    SETB P0.1
+    SETB P0.2
+    SETB P0.3
+    SETB P0.4
+    SETB P0.5
+    SETB P0.6
+    SETB P0.7
 
 	MOV R0, #0
 	MOV R1, #0
@@ -44,6 +55,8 @@ reset:
 	MOV R3, #0
 	MOV R4, #0
 	MOV R5, #20h
+    ;MOV R5, #30h
+    MOV R6, #00
 	MOV R7, #0
 
     MOV 20H, #0
@@ -97,8 +110,7 @@ reset:
     MOV 4BH, #'1'
 
 	MOV 70H, #0
-    MOV R6, #00
-    ;MOV R5, #30h
+
     MOV 30H, #0
     MOV 31H, #0
     MOV 32H, #0
@@ -109,6 +121,8 @@ reset:
     MOV 37H, #0
     MOV 38H, #0
     MOV 39H, #0
+
+    CLR F0
 ; | Saltar para o início do programa principal
     LJMP main
 
@@ -537,7 +551,7 @@ lcd_init:
     SETB EN
     CLR EN
 
-    CALL delay_mini
+    CALL delay
 
     SETB EN
     CLR EN
@@ -547,7 +561,7 @@ lcd_init:
     SETB EN
     CLR EN
 
-    CALL delay_mini
+    CALL delay
     CLR P1.7
     CLR P1.6
     CLR P1.5
@@ -561,7 +575,7 @@ lcd_init:
 
     SETB EN
     CLR EN
-    CALL delay_mini
+    CALL delay
 
 ; | Display on/o
 ; | The display
@@ -580,7 +594,7 @@ lcd_init:
 
     SETB EN
     CLR EN
-    CALL delay_mini
+    CALL delay
     RET
 
 ; -------------------------------- Escreve String ----------------------------------
@@ -948,7 +962,8 @@ passou: ; | Imprime transação aprovada
         ACALL escreveString
         ACALL delay
         ACALL clearDisplay
-        ACALL reset
+        ;ACALL reset
+        RST 0
         SJMP $
 
 valor_total: ; | Imprime valor da compra
@@ -1066,7 +1081,6 @@ delay_mini:
 ; ---------------------------------- Main --------------------------------------
 
 main:
-    ACALL lcd_init
     ACALL opcoes
 	ACALL pressionado_1
 JMP main
