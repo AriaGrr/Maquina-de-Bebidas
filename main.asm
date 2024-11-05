@@ -28,8 +28,15 @@ org 0030h
 
 reset: 
 ; | Limpar os registradores e + (se tiver mais coisas que são usadas e precisa limpar taca aqui)
-    clr A
 
+    MOV R0, #20H ; | Inicializa o registrador R0 com o endereço inicial
+    MOV R1, #10H ; | Define o número de bytes a serem zerados (ajuste conforme necessário)
+    loop_zerar:
+        MOV @R0, #0 ; | Escreve 0 no endereço apontado por R0
+        INC R0 ; | Incrementa o endereço para o próximo byte
+        DJNZ R1, loop_zerar ; | Decrementa o contador e repete o loop
+
+    clr A
 	MOV R0, #0
 	MOV R1, #0
 	MOV R2, #0
@@ -104,7 +111,8 @@ checar_tecla1:
 		MOV R0, #0 ; | Reseta R0
 		ACALL valor_total ; | Imprime o valor da compr no LCD
 		ACALL mostrar_senha ; | Mostra espaço para a senha
-		ACALL delay_mini ; | Um delay
+		CLR F0
+        ACALL delay_mini ; | Um delay
 		ACALL pressionado_2 ; | Leitura do teclado para o input da senha
 
 	checar_limite:
@@ -569,6 +577,14 @@ escreveString:
 
 ; -------------------------------- Posiciona cursor --------------------------------
 
+; | Posiciona o cursor na linha e coluna desejada.
+; | Escreva no Acumulador o valor de endereço da linha e coluna.
+
+;|--------------------------------------------------------------------------------------|
+;|linha 1 | 00 | 01 | 02 | 03 | 04 |05 | 06 | 07 | 08 | 09 |0A | 0B | 0C | 0D | 0E | 0F |
+;|linha 2 | 40 | 41 | 42 | 43 | 44 |45 | 46 | 47 | 48 | 49 |4A | 4B | 4C | 4D | 4E | 4F |
+;|--------------------------------------------------------------------------------------|
+
 posicionaCursor :
     CLR RS ; | clear RS - indicates that instruction is being sent to module
     SETB P1.7 ; |
@@ -738,11 +754,11 @@ AVISO_2:
     DB 0
 
 CHEIO:
-    DB " Limite excedido"
+    DB "LIMITE EXCEDIDO"
     DB 0 
 
 NUMERO_INVALIDO:
-    DB "Numero invalido"
+    DB "NUMERO INVALIDO"
     DB 0
 
 VALOR:
