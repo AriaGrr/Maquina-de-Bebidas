@@ -963,7 +963,6 @@ passou: ; | Imprime transação aprovada
         ACALL delay
         ACALL clearDisplay
         ;ACALL reset
-        RST 0
         SJMP $
 
 valor_total: ; | Imprime valor da compra
