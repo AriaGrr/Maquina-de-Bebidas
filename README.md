@@ -11,6 +11,7 @@ Projeto utilizando assembly
 
 <p>Para especificação de cada função, favor olhar os comentários dentro do código no arquivo main.asm. </p>
 
+<p>Entres as maiores dificuldades do projeto vieram com a administração de memória e leitura do teclado. No primeiro, após uma compra de sucesso, a pilha sobescreve o local no qual é feito o pedido. No quesito do teclado, encontrou-se uma dificuldade de uma leitura fantasma, onde era adicionado um algarismo na senha sem que fosse apertado uma tecla. Este foi resolvido com um CLR F0. </p>
 
 Dynamic Interface Atualizada:
 ![image](https://github.com/user-attachments/assets/de8874d7-c8a4-43a9-a1e5-cd671906509c)
