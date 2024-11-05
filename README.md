@@ -14,3 +14,73 @@ Projeto utilizando assembly
 
 Dynamic Interface Atualizada:
 ![image](https://github.com/user-attachments/assets/de8874d7-c8a4-43a9-a1e5-cd671906509c)
+
+
+Fluxograma do projeto:
+![Diagrama em branco](https://github.com/user-attachments/assets/8208cb20-715c-41b3-a4c0-92127bff7fc4)
+
+Vídeos de exemplo:
+
+Neste vídeo, o aviso de número inválido quando se aperta 7, 8 ou 9.
+
+
+https://github.com/user-attachments/assets/7ef01136-0c80-4612-a07e-3ca5ded4d2cc
+
+Neste vídeo se tem um exemplo do uso do botão de remover na primeira fase.
+
+
+
+https://github.com/user-attachments/assets/0ed82afc-bc7c-4991-94e0-a7f9f553b00e
+
+
+Neste vídeo, é mostrado o uso do botão de reset.
+
+
+
+https://github.com/user-attachments/assets/3dcc1176-8fa8-4e63-93cc-7a26bcf863bb
+
+
+Neste exemplo, é visto um exemplo do uso de número válidos além do aviso do limite.
+
+
+
+https://github.com/user-attachments/assets/8c99faac-7422-4813-b8ea-385287ff66ee
+
+
+Neste vídeo, é mostrado o uso de mais botões de bebida além do botão para somar o valor da compra.
+
+
+
+https://github.com/user-attachments/assets/e654d6af-25ee-40a7-9819-73019c8cc4f6
+
+
+Neste vídeo, exemplificamos a digitação da senha e o uso do botão de remover da segunda fase.
+
+
+
+https://github.com/user-attachments/assets/067a57f0-b205-4062-a99c-a417cbb3c745
+
+
+Neste vídeo, a senha é escrita incorretamente.
+
+
+
+https://github.com/user-attachments/assets/8ee108d6-1fe3-43f3-a13b-5f905e29eff5
+
+
+
+
+Neste vídeo, um exemplo de uma transação bem sucedida.
+
+
+
+https://github.com/user-attachments/assets/9083e447-d229-49a2-a829-288f24d1486b
+
+
+
+
+
+
+
+
+
