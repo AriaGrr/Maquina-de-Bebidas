@@ -5,7 +5,7 @@ Autores:
 <p>Marjorie Luize Martins Costa - RA: 24.223.084-5</p>
 
 
-Projeto utilizando assembly
+Projeto na linguagem Assembly, utilizando o EdSim51
 
 <p>Este projeto é uma máquina de venda de bebidas. Este projeto foi feito baseado nas funcionalidades do EdSim51 e da linguagem de Assembly. No projeto são contidas basicamente duas fases: o pedido e o pagamento, respectivamente. No primeiro, é feito o pedido de bebidas do cliente pelo teclado matricial. Na segunda fase, é usado o mesmo teclado para confirmar o pagamento, sendo inspirado em uma senha de cartão de crédito, são digitados dois zeros e o preço total, sendo comparado após para confirmar ou negar a compra, fazendo com que o usuário tente novamente. </p>
 
