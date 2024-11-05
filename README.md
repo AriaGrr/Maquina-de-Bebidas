@@ -1,4 +1,9 @@
 # Maquina-de-Bebidas
+Nomes:
+
+Nuno Martins Guilhermino da Silva - RA: 24.123.035-8
+Marjorie Luize Martins Costa - RA: 24.223.084-5
+
 
 Projeto utilizando assembly
 
