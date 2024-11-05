@@ -240,15 +240,15 @@ checar_tecla2:
         MOV 10h, #4
         MOV A, R6
         CJNE A, 10h , checar_1
-        MOV DPTR, #CHEIO
+        ;MOV DPTR, #CHEIO
         ACALL delay
-        ACALL clearDisplay
-        MOV A, #00h
-        ACALL posicionaCursor
-        ACALL delay
-        ACALL escreveString
-		ACALL clearDisplay	
-		ACALL delay
+        ;ACALL clearDisplay
+        ;MOV A, #00h
+        ;ACALL posicionaCursor
+        ;ACALL delay
+        ;ACALL escreveString
+		;ACALL clearDisplay	
+		;ACALL delay
         RET
 
 	checar_1: ; | Compara o número com 1, coloca na memória e um X na lcd
@@ -722,11 +722,11 @@ PAGAR:
     DB 0
 
 ZERO:
-    DB " 0-   Retirar"
+    DB " 0- Retirar item"
     DB 0
 
 TRANSACAO:
-    DB "   TRANSACAO "
+    DB "    TRANSACAO "
     DB 0
 
 APROVADA:
@@ -762,7 +762,7 @@ NUMERO_INVALIDO:
     DB 0
 
 VALOR:
-    DB "Total R$"
+    DB "  Total R$"
     DB 0
 
 SENHA:
