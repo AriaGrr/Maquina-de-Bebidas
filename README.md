@@ -23,7 +23,8 @@ Dynamic Interface Atualizada:
 
 
 Fluxograma do projeto:
-![Diagrama em branco](https://github.com/user-attachments/assets/8208cb20-715c-41b3-a4c0-92127bff7fc4)
+![Diagrama](https://github.com/user-attachments/assets/ff2b5dde-1833-475d-a2a3-874a1322672e)
+
 
 Vídeos de exemplo:
 
