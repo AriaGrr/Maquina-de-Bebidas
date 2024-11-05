@@ -40,6 +40,8 @@ reset:
     clr A
     MOV B, #0
 
+    ;ACALL clearDisplay
+
     SETB P0.0
     SETB P0.1
     SETB P0.2
@@ -137,16 +139,35 @@ checar_tecla1:
 
 	checar_remocao:
         CJNE A, 41h, checar_reset ; | Se não for igual, ir para próxima função
-  	DEC R0 ; | Igualar R0 ao número a ser apagado
+  	    DEC R0 ; | Igualar R0 ao número a ser apagado
 	    MOV @R0, #0h ; | Tira o número 
 		ACALL amarelo ; | LEDS amarelos acendem
         DEC R5 ; | Registra mudança de endereço
 		DEC R6 ; | Diminui o contador
+        MOV A, #00h
+        ACALL posicionaCursor
+        MOV DPTR,#PRODUTO
+        ACALL escreveString
+
+        MOV A, #40h
+        ACALL posicionaCursor
+        MOV DPTR,#RETIRADO
+        ACALL escreveString
+
+        ACALL clearDisplay
         RET
 
 	checar_reset:
         CJNE A, 42h, checkout ; | Se não for igual, ir para próxima função
         ACALL amarelo ; | LEDS amarelos acendem
+
+        MOV A, #00h
+        ACALL posicionaCursor
+        MOV DPTR,#REINICIO
+        ACALL escreveString
+        ;ACALL delay_mini
+        ACALL clearDisplay
+
         LJMP reset ; | Reseta a máquina
 
 	checkout:
@@ -178,16 +199,44 @@ checar_tecla1:
 	checar_coca:
         MOV A, R4 ; | Coloca o número lido no teclado de volta no A para comparação
         CJNE A, 4Bh, checar_pepsi ; | Compara com o número 1, caso contrário, compara com número 2
+
         MOV @R0, #5 ; | Coloca preço de uma coca cola na memória
         INC R6 ; | Incrementa o contador
         INC R5 ; | Ir para o próximo endereço
+
+        MOV A, #00h
+        ACALL posicionaCursor
+        MOV DPTR,#COCA_1
+        ACALL escreveString
+
+        MOV A, #40h
+        ACALL posicionaCursor
+        MOV DPTR,#ADICIONADO
+        ACALL escreveString
+
+        ACALL clearDisplay
+
         RET
 
 	checar_pepsi:
         CJNE A, 4Ah, checar_sprite  ; | Compara número 2, caso não seja, olhar número 3
+
         MOV @R0, #6 ; | Coloca o preço de uma pepsi na memória.
         INC R6 ; | Incrementa o contador
         INC R5 ; | Ir para o próximo endereço
+
+        MOV A, #00h
+        ACALL posicionaCursor
+        MOV DPTR,#PEPSI_1
+        ACALL escreveString
+
+        MOV A, #40h
+        ACALL posicionaCursor
+        MOV DPTR,#ADICIONADO
+        ACALL escreveString
+
+        ACALL clearDisplay
+
         RET
 
 	checar_sprite:
@@ -195,6 +244,18 @@ checar_tecla1:
         MOV @R0, #4 ; | Coloca preço de uma sprite na memória
         INC R6 ; | Incrementa contador
         INC R5 ; | Incrementa para o próximo endereço
+
+        MOV A, #00h
+        ACALL posicionaCursor
+        MOV DPTR,#SPRITE_1
+        ACALL escreveString
+
+        MOV A, #40h
+        ACALL posicionaCursor
+        MOV DPTR,#ADICIONADO
+        ACALL escreveString
+
+        ACALL clearDisplay
         RET
 
 	checar_monster:
@@ -202,6 +263,18 @@ checar_tecla1:
         MOV @R0, #8 ; | Inserir preço de um monster na memória
         INC R6 ; | Incrementa o contador
         INC R5 ; | Vai para o próximo endereço
+        
+        MOV A, #00h
+        ACALL posicionaCursor
+        MOV DPTR,#MONSTER_1
+        ACALL escreveString
+
+        MOV A, #40h
+        ACALL posicionaCursor
+        MOV DPTR,#ADICIONADO
+        ACALL escreveString
+
+        ACALL clearDisplay
         RET
 
 	checar_redbull:
@@ -209,6 +282,18 @@ checar_tecla1:
         MOV @R0, #7 ; | Inserir preço de uma redbull na memória
         INC R6 ; | Incrementa o contador
         INC R5 ; | Vai para o próximo endereço
+        
+        MOV A, #00h
+        ACALL posicionaCursor
+        MOV DPTR,#REDBULL_1
+        ACALL escreveString
+
+        MOV A, #40h
+        ACALL posicionaCursor
+        MOV DPTR,#ADICIONADO
+        ACALL escreveString
+
+        ACALL clearDisplay
         RET
 
 	checar_sukita:
@@ -216,6 +301,18 @@ checar_tecla1:
         MOV @R0, #3 ; | Coloca preço de uma sukita na memória
         INC R6 ; | Incrementa o contador
         INC R5 ; | Vai para o próximo endereço
+        
+        MOV A, #00h
+        ACALL posicionaCursor
+        MOV DPTR,#SUKITA_1
+        ACALL escreveString
+
+        MOV A, #40h
+        ACALL posicionaCursor
+        MOV DPTR,#ADICIONADO
+        ACALL escreveString
+
+        ACALL clearDisplay
         RET
 
 	checar_sete:
@@ -802,6 +899,46 @@ VALOR:
 
 SENHA:
     DB "Senha - "
+    DB 0
+
+REINICIO:
+    DB "  REINICIANDO"
+    DB 0
+    
+COCA_1:
+    DB "  COCA R$ 5"
+    DB 0 
+
+PEPSI_1:
+    DB "   PEPSI R$ 6"
+    DB 0
+
+SPRITE_1:
+    DB "  SPRITE R$ 4"
+    DB 0
+
+SUKITA_1: 
+    DB "  SUKITA R$ 3"
+    DB 0
+
+REDBULL_1: 
+    DB "  REDBULL R$ 7"
+    DB 0
+
+MONSTER_1:
+    DB "  MONSTER R$ 8"
+    DB 0
+
+ADICIONADO:
+    DB "  ADICIONADO(A)"
+    DB 0
+
+PRODUTO:
+    DB "    PRODUTO"
+    DB 0
+
+RETIRADO:
+    DB "  RETIRADO"
     DB 0
 
 ; ---------------------------------- Prints ---------------------------------------
